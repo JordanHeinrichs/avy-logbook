@@ -9,10 +9,10 @@ use std::{env, sync::Arc};
 use tracing::log::warn;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod db_client;
 pub mod middlewares;
 pub mod routes;
 mod services;
-mod store;
 
 // SETUP Constants
 const SERVER_PORT: &str = "8080";
@@ -20,7 +20,7 @@ const SERVER_HOST: &str = "0.0.0.0";
 
 /// Server that is split into a Frontend to serve static files (Svelte) and Backend
 /// Backend is further split into a non authorized area and a secure area
-/// The Back end is using 2 middleware: sessions (managing session data) and user_secure (checking for authorization)
+/// The Back end is using 2 middleware: sessions (managing session data)
 #[tokio::main]
 async fn main() {
     // start tracing - level set by either RUST_LOG env variable or defaults to debug
@@ -38,8 +38,10 @@ async fn main() {
         .parse()
         .expect("Can not parse address and port");
 
+    let db_config = db_client::DbClient::get_config().await;
+
     // create store for backend.  Stores an api_token.
-    let shared_state = Arc::new(store::Store::new("123456789"));
+    let shared_state = Arc::new(db_client::DbClient::new(&db_config));
 
     // combine the front and backend into server
     let app = Router::new().merge(services::backend(shared_state));
