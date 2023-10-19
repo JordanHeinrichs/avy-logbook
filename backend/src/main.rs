@@ -4,15 +4,15 @@
 #![allow(missing_docs)]
 
 use axum::Router;
+use std::env;
 use std::net::SocketAddr;
-use std::{env, sync::Arc};
 use tracing::log::warn;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-mod db_client;
 pub mod middlewares;
 pub mod routes;
 mod services;
+mod shared_state;
 
 // SETUP Constants
 const SERVER_PORT: &str = "8080";
@@ -32,16 +32,16 @@ async fn main() {
         .init();
 
     // configure server from environmental variables
-    let (port, host) = from_env();
+    let config = from_env();
 
-    let addr: SocketAddr = format!("{}:{}", host, port)
+    let addr: SocketAddr = format!("{}:{}", config.db_server_host, config.db_server_port)
         .parse()
         .expect("Can not parse address and port");
 
-    let db_config = db_client::DbClient::get_config().await;
+    let db_config = shared_state::SharedState::get_config().await;
 
     // create store for backend.  Stores an api_token.
-    let shared_state = Arc::new(db_client::DbClient::new(&db_config));
+    let shared_state = shared_state::SharedState::new(&db_config, config.jwt_secret);
 
     // combine the front and backend into server
     let app = Router::new().merge(services::backend(shared_state));
@@ -66,16 +66,25 @@ async fn shutdown_signal() {
 
 // Variables from Environment or default to configure server
 // port, host, secret
-fn from_env() -> (String, String) {
+fn from_env() -> Config {
     if env::var("SERVER_SECRET").is_err() {
         warn!("env var SERVER_SECRET should be set and unique (64 bytes long)");
     }
-    (
-        env::var("SERVER_PORT")
+    return Config {
+        db_server_port: env::var("SERVER_PORT")
             .ok()
             .unwrap_or_else(|| SERVER_PORT.to_string()),
-        env::var("SERVER_HOST")
+        db_server_host: env::var("SERVER_HOST")
             .ok()
             .unwrap_or_else(|| SERVER_HOST.to_string()),
-    )
+        jwt_secret: env::var("JWT_SECRET")
+            .ok()
+            .unwrap_or_else(|| SERVER_HOST.to_string()),
+    };
+}
+
+pub struct Config {
+    db_server_port: String,
+    db_server_host: String,
+    jwt_secret: String,
 }

@@ -1,16 +1,19 @@
+use std::sync::Arc;
+
 use aws_config::{meta::region::RegionProviderChain, SdkConfig};
 use aws_sdk_dynamodb::Client;
 
 #[derive(Clone, Debug)]
-pub struct DbClient {
-    client: Client,
+pub struct SharedState {
+    pub client: Arc<Client>,
+    pub jwt_token: String,
 }
 
-impl DbClient {
-    pub fn new(config: &SdkConfig) -> Self {
-        let client = Client::new(&config);
+impl SharedState {
+    pub fn new(config: &SdkConfig, jwt_token: String) -> Self {
+        let client = Arc::new(Client::new(&config));
 
-        Self { client: client }
+        Self { client, jwt_token }
     }
 
     pub async fn get_config() -> SdkConfig {
