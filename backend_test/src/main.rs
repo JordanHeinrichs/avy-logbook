@@ -25,8 +25,13 @@ async fn main() {
 async fn hello_someone(
     Json(payload): Json<HelloWorldRequest>,
 ) -> (StatusCode, Json<HelloWorldResponse>) {
-    let res = HelloWorldResponse {
-        result: format!("Hello {}", payload.name),
+    let res = match &payload.last_name {
+        Some(last_name) => HelloWorldResponse {
+            result: format!("Hello {} {}", payload.first_name, last_name),
+        },
+        None => HelloWorldResponse {
+            result: format!("Hello {}", payload.first_name,),
+        },
     };
     (StatusCode::OK, Json(res))
 }
@@ -40,7 +45,8 @@ async fn hello_world() -> (StatusCode, Json<HelloWorldResponse>) {
 
 #[derive(Deserialize)]
 struct HelloWorldRequest {
-    name: String,
+    first_name: String,
+    last_name: Option<String>,
 }
 
 #[derive(Serialize)]
