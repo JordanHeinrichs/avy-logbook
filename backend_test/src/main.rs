@@ -3,23 +3,26 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use lambda_http::{run, Error};
 use serde::{Deserialize, Serialize};
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error> {
     // initialize tracing
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        // disable printing the name of the module in every log line.
+        .with_target(false)
+        // disabling time is handy because CloudWatch will add the ingestion time.
+        .without_time()
+        .init();
 
     // build our application with a route
     let app = Router::new()
         .route("/hello_world", post(hello_someone))
         .route("/hello_world", get(hello_world));
 
-    // run our app with hyper, listening globally on port 3000
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    run(app).await
 }
 
 async fn hello_someone(
