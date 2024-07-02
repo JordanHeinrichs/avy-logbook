@@ -1,15 +1,18 @@
-use axum::{
-    error_handling::HandleErrorLayer,
-    http::StatusCode,
-    routing::{get, post},
-    BoxError, Json, Router,
-};
-use lambda_http::{run, Error};
+mod config;
 mod dynamodb_store;
-use self::dynamodb_store::DynamoDbStore;
+
+use aws_config::BehaviorVersion;
+use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
+use dynamodb_store::DynamoDbState;
+use lambda_http::{run, Error};
 use serde::{Deserialize, Serialize};
-use tower::ServiceBuilder;
-use tower_sessions::SessionManagerLayer;
+use std::sync::Arc;
+
+pub struct AppState {
+    db: DynamoDbState,
+}
+
+const TABLE_NAME: &str = "avy_logbook";
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -22,27 +25,24 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .init();
 
-    let config = aws_config::load_from_env().await;
+    let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let client = aws_sdk_dynamodb::Client::new(&config);
 
-    let session_store = DynamoDbStore::new(client, String::from("avy_logbook"));
-    let session_service = ServiceBuilder::new()
-        .layer(HandleErrorLayer::new(|_: BoxError| async {
-            StatusCode::BAD_REQUEST
-        }))
-        .layer(SessionManagerLayer::new(session_store).with_secure(true));
+    let db_state = DynamoDbState::new(client, String::from(TABLE_NAME));
+    let app_state = Arc::new(AppState { db: db_state });
 
     // build our application with a route
     let app = Router::new()
-        .route("/hello_world", post(hello_someone))
+        // .route("/hello_world", post(hello_someone))
         .route("/hello_world", get(hello_world))
-        .layer(session_service)
-        .route("/login", get(login));
+        // .route("/login", get(login))
+        .with_state(app_state);
 
     run(app).await
 }
 
 async fn hello_someone(
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<HelloWorldRequest>,
 ) -> (StatusCode, Json<HelloWorldResponse>) {
     let res = match &payload.last_name {
@@ -56,7 +56,7 @@ async fn hello_someone(
     (StatusCode::OK, Json(res))
 }
 
-async fn hello_world() -> (StatusCode, Json<HelloWorldResponse>) {
+async fn hello_world(State(state): State<Arc<AppState>>) -> (StatusCode, Json<HelloWorldResponse>) {
     let res = HelloWorldResponse {
         result: format!("Hello world"),
     };
@@ -64,7 +64,9 @@ async fn hello_world() -> (StatusCode, Json<HelloWorldResponse>) {
 }
 
 async fn login() -> (StatusCode, Json<HelloWorldResponse>) {
-    let res = HelloWorldResponse {
+    // In the future this will instead be the callback from OAuth, for now
+    // just create a session
+    let res: HelloWorldResponse = HelloWorldResponse {
         result: format!("Hello world"),
     };
     (StatusCode::OK, Json(res))
@@ -80,3 +82,46 @@ struct HelloWorldRequest {
 struct HelloWorldResponse {
     result: String,
 }
+
+// pub async fn session_middleware(
+//     State(state): State<Arc<AppState>>,
+//     request: Request,
+//     next: Next,
+// ) -> Response {
+//     let result: aws_sdk_dynamodb::operation::get_item::GetItemOutput = self
+//         .client
+//         .get_item()
+//         .table_name(&self.table)
+//         .key("session_id", AttributeValue::S(session_id.to_string()))
+//         .send()
+//         .await
+//         .map_err(|e| Error::from(e))?;
+
+//     if let Some(result) = result.item {
+//         let data = &result["session_data"];
+//         let data = data.as_b();
+//         let data = data.unwrap();
+//         let session: Session = rmp_serde::from_slice(data.as_ref())?;
+
+//         Ok(Some(session))
+//     } else {
+//         Ok(None)
+//     }
+// }
+
+// pub async fn create_session(request: Request, next: Next) -> Response {
+//     let session_id = AttributeValue::S(session.id().to_string());
+//     let serialized_session = rmp_serde::to_vec(&session).unwrap();
+//     let session_data = AttributeValue::B(Blob::new(serialized_session));
+
+//     self.client
+//         .put_item()
+//         .table_name(&self.table)
+//         .item("session_id", session_id)
+//         .item("session_data", session_data)
+//         .send()
+//         .await
+//         .map_err(|e| Error::from(e))?;
+
+//     Ok(())
+// }
