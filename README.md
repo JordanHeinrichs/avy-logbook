@@ -23,6 +23,33 @@ Note there is no persistance beyond what's held in memory while the application 
 
 run as `cargo run` from parent directory and not needed to run inside `./back_end` folder
 
+Dynamo DB local setup:
+`docker run -p8000:8000 amazon/dynamodb-local:latest`
+
+Write
+```bash
+curl -X POST http://localhost:9000/hello_world -H 'Content-Type: application/json' -d '{"first_name": "test", "last_name": "foo"}'
+```
+
+```bash
+aws dynamodb create-table --endpoint-url http://localhost:8000 \
+    --table-name AvyLogbook \
+    --attribute-definitions \
+        AttributeName=PK,AttributeType=S \
+        AttributeName=SK,AttributeType=S \
+    --key-schema \
+        AttributeName=PK,KeyType=HASH \
+        AttributeName=SK,KeyType=RANGE \
+    --table-class STANDARD \
+    --billing-mode PAY_PER_REQUEST
+```
+To check item:
+```
+aws dynamodb get-item --endpoint-url http://localhost:8000 --consistent-read \
+    --table-name AvyLogbook \
+    --key '{ "PK": {"S": "test"}, "SK": {"S": "foo"}}'
+```
+
 # Front end - Svelte
 - Located in `./front_end`
 - navbar with login and logout

@@ -2,7 +2,12 @@ mod config;
 mod dynamodb_store;
 
 use aws_config::BehaviorVersion;
-use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
+use axum::{
+    extract::State,
+    http::StatusCode,
+    routing::{get, post},
+    Json, Router,
+};
 use dynamodb_store::DynamoDbState;
 use lambda_http::{run, Error};
 use serde::{Deserialize, Serialize};
@@ -12,7 +17,7 @@ pub struct AppState {
     db: DynamoDbState,
 }
 
-const TABLE_NAME: &str = "avy_logbook";
+const TABLE_NAME: &str = "AvyLogbook";
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -26,16 +31,19 @@ async fn main() -> Result<(), Error> {
         .init();
 
     let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
-    let client = aws_sdk_dynamodb::Client::new(&config);
+    let config = aws_sdk_dynamodb::config::Builder::from(&config)
+        .endpoint_url("http://localhost:8000")
+        .build();
+    let client = aws_sdk_dynamodb::Client::from_conf(config);
 
     let db_state = DynamoDbState::new(client, String::from(TABLE_NAME));
     let app_state = Arc::new(AppState { db: db_state });
 
     // build our application with a route
     let app = Router::new()
-        // .route("/hello_world", post(hello_someone))
+        .route("/hello_world", post(hello_someone))
         .route("/hello_world", get(hello_world))
-        // .route("/login", get(login))
+        .route("/login", get(login))
         .with_state(app_state);
 
     run(app).await
@@ -45,6 +53,23 @@ async fn hello_someone(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<HelloWorldRequest>,
 ) -> (StatusCode, Json<HelloWorldResponse>) {
+    let db = &state.as_ref().db;
+    db.client
+        .put_item()
+        .table_name(&db.table)
+        .item(
+            "PK",
+            aws_sdk_dynamodb::types::AttributeValue::S(payload.first_name.clone()),
+        )
+        .item(
+            "SK",
+            aws_sdk_dynamodb::types::AttributeValue::S(
+                payload.last_name.clone().unwrap_or("not provided".into()),
+            ),
+        )
+        .send()
+        .await
+        .unwrap();
     let res = match &payload.last_name {
         Some(last_name) => HelloWorldResponse {
             result: format!("Hello {} {}", payload.first_name, last_name),

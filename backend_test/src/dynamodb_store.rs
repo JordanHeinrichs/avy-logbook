@@ -2,8 +2,8 @@ use aws_sdk_dynamodb::Client;
 
 #[derive(Clone, Debug)]
 pub struct DynamoDbState {
-    client: Client,
-    table: String,
+    pub client: Client,
+    pub table: String,
 }
 
 impl DynamoDbState {
