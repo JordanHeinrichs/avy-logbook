@@ -1,8 +1,7 @@
-# Welcome to your CDK TypeScript project
+# Deployment IaC
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+This project deploys the AWS infrastructure using CDK. It is designed to be as cheap as possible
+running small lambdas with the FE just a hosted S3 bucket. No API gateway as the goal is to only use free tier services.
 
 ## Useful commands
 

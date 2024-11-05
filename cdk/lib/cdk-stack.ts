@@ -13,7 +13,7 @@ export class CdkStack extends cdk.Stack {
       handler: "invalid",
       functionName: "rust-web-server",
       architecture: aws_lambda.Architecture.ARM_64,
-      code: aws_lambda.Code.fromAsset(path.join(__dirname, "..", "..", "target/lambda/backend_test/bootstrap.zip")),
+      code: aws_lambda.Code.fromAsset(path.join(__dirname, "..", "..", "target/lambda/backend/bootstrap.zip")),
     });
     const fnUrl = webServer.addFunctionUrl({
       authType: aws_lambda.FunctionUrlAuthType.NONE,

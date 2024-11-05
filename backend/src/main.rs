@@ -1,90 +1,120 @@
-#![deny(clippy::all)]
-#![warn(clippy::pedantic)]
-#![warn(clippy::nursery)]
-#![allow(missing_docs)]
+use anyhow::Result;
+use api::{private, public};
+use auth::{backend::AuthBackend, sessions::session_store_config};
+use axum::{
+    middleware,
+    routing::{get, post},
+    Router,
+};
+use axum_login::AuthManagerLayerBuilder;
+use database::setup::init_dynamo_client;
+use http::HeaderValue;
+use std::{net::SocketAddr, sync::Arc, time::Duration};
+use tower_http::{
+    compression::CompressionLayer, cors::CorsLayer, limit::RequestBodyLimitLayer,
+    services::ServeDir,
+};
+use tower_sessions::{
+    cookie::{Key, SameSite},
+    Expiry, SessionManagerLayer,
+};
+use tower_sessions_dynamodb_store::DynamoDBStore;
+use utils::shutdown_signal;
 
-use axum::Router;
-use std::env;
-use std::net::SocketAddr;
-use tracing::log::warn;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+mod api;
+mod auth;
+mod database;
+mod errors;
+mod utils;
 
-pub mod middlewares;
-pub mod routes;
-mod services;
-mod shared_state;
-
-// SETUP Constants
-const SERVER_PORT: &str = "8080";
-const SERVER_HOST: &str = "0.0.0.0";
-
-/// Server that is split into a Frontend to serve static files (Svelte) and Backend
-/// Backend is further split into a non authorized area and a secure area
-/// The Back end is using 2 middleware: sessions (managing session data)
 #[tokio::main]
-async fn main() {
-    // start tracing - level set by either RUST_LOG env variable or defaults to debug
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(
-            std::env::var("RUST_LOG").unwrap_or_else(|_| "svelte_axum_project=debug".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+async fn main() -> Result<()> {
+    // Initialize the logger.
+    tracing_subscriber::fmt::init();
 
-    // configure server from environmental variables
-    let config = from_env();
+    tracing::info!("Starting server.");
 
-    let addr: SocketAddr = format!("{}:{}", config.db_server_host, config.db_server_port)
-        .parse()
-        .expect("Can not parse address and port");
+    // PostgreSQL connection pool.
+    let dynamo_client = init_dynamo_client().await?;
 
-    let db_config = shared_state::SharedState::get_config().await;
+    // Session layer as a request extension using Redis as a session store.
+    let session_store =
+        DynamoDBStore::new(dynamo_client.client, session_store_config(&dynamo_client));
 
-    // create store for backend.  Stores an api_token.
-    let shared_state = shared_state::SharedState::new(&db_config, config.jwt_secret);
+    // Generates a singing/encryption key for the cookies.
+    let key = Key::generate();
 
-    // combine the front and backend into server
-    let app = Router::new().merge(services::backend(shared_state));
+    // Session layer as a request extension.
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_expiry(Expiry::OnInactivity(time::Duration::minutes(30)))
+        .with_same_site(SameSite::Strict)
+        .with_secure(true)
+        .with_private(key);
 
-    tracing::info!("listening on http://{}", addr);
+    // Authentication backend.
+    let backend = AuthBackend::new(&db_pool);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .unwrap();
-}
+    // Authentication layer.
+    let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
 
-/// Tokio signal handler that will wait for a user to press CTRL+C.
-/// We use this in our `Server` method `with_graceful_shutdown`.
-async fn shutdown_signal() {
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Expect shutdown signal handler");
-    println!("signal shutdown");
-}
+    // Add CORS header to responses.
+    let cors = CorsLayer::new()
+        .allow_credentials(true)
+        .allow_origin("http://localhost:8000".parse::<HeaderValue>()?)
+        .max_age(Duration::from_secs(3600));
 
-// Variables from Environment or default to configure server
-// port, host, secret
-fn from_env() -> Config {
-    if env::var("SERVER_SECRET").is_err() {
-        warn!("env var SERVER_SECRET should be set and unique (64 bytes long)");
-    }
-    return Config {
-        db_server_port: env::var("SERVER_PORT")
-            .ok()
-            .unwrap_or_else(|| SERVER_PORT.to_string()),
-        db_server_host: env::var("SERVER_HOST")
-            .ok()
-            .unwrap_or_else(|| SERVER_HOST.to_string()),
-        jwt_secret: env::var("JWT_SECRET")
-            .ok()
-            .unwrap_or_else(|| SERVER_HOST.to_string()),
-    };
-}
+    // Compresses response bodies.
+    let compression = CompressionLayer::new();
 
-pub struct Config {
-    db_server_port: String,
-    db_server_host: String,
-    jwt_secret: String,
+    // Limit the size of request bodies to 1 MB.
+    let request_size = RequestBodyLimitLayer::new(1024 * 1024);
+
+    // Routes that require authentication.
+    // The custom middleware runs before these handlers.
+    let protected_routes = Router::new()
+        .route("/protected", get(private::example_protected_handler))
+        .route("/logout", post(private::logout_handler))
+        .route_layer(middleware::from_fn(api::middleware::check_auth));
+
+    // Routes that are public.
+    let public_routes = Router::new()
+        .route("/", get(public::example_endpoint_handler))
+        .route("/start", get(public::start_handler))
+        .route("/login", post(public::login_handler))
+        .route("/register", post(public::register_handler));
+
+    // Serve the frontend statically in production.
+    let static_dir = ServeDir::new("frontend/dist");
+
+    // Router application.
+    let app = Router::new()
+        .nest("/api/", public_routes)
+        .nest("/api/", protected_routes)
+        .nest_service("/", static_dir)
+        .layer(request_size)
+        .layer(auth_layer)
+        .layer(cors)
+        .layer(compression)
+        .with_state(dynamo_client);
+
+    // Socket address.
+    let socket_addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+
+    // TCP listener.
+    let listener = tokio::net::TcpListener::bind(socket_addr).await?;
+
+    tracing::info!("Backend listening on: {}", socket_addr);
+
+    // Serve the application with hyper.
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await?;
+
+    // Ensure the task managing the Redis connections runs to completion before exiting.
+    redis_connection.await??;
+
+    Ok(())
 }
