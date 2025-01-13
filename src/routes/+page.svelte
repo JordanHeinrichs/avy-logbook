@@ -14,7 +14,8 @@
 </script>
 
 <main class="container">
-  <div>
+  <div class="flex-1 flex-row">
+    <img src="/logo.png" alt="Logo" class="h-20" />
     <h1 class="text-3xl font-bold text-center p-1">Avi Logbook</h1>
   </div>
 
