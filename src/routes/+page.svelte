@@ -14,12 +14,14 @@
 </script>
 
 <main class="container">
-  <div class="flex flex-auto flex-row items-center bg-base-200 sticky top-0">
-    <img src="/logo.png" alt="Logo" class="size-20 ml-2" />
-    <h1 class="text-3xl font-bold grow text-primary">Avy Logbook</h1>
-    <button class="btn btn-primary mr-4" onclick={() => createLog()}
-      >New Entry</button
-    >
+  <div
+    class="flex flex-auto flex-row items-center bg-base-200 sticky top-0 shadow-md"
+  >
+    <img src="/logo.png" alt="Logo" class="size-20 ml-2 w-20" />
+    <h1 class="text-3xl font-bold grow text-center text-primary">
+      Avy Logbook
+    </h1>
+    <div class="w-20"></div>
   </div>
 
   <div class="list bg-base-100 rounded-box shadow-md">
@@ -32,14 +34,17 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
-          class="list-row flex flex-row justify-items-end cursor-pointer items-center hover:bg-primary-content"
+          class="list-row pb-4 shadow-sm flex flex-row justify-between cursor-pointer items-center hover:bg-primary-content"
           onclick={() => gotoLog(log.id)}
           aria-label="Go to log"
         >
-          <div class="">{log.name}</div>
-          <div class="text-xs uppercase font-semibold opacity-60">
-            {log.date}
+          <div class="flex items-baseline gap-4">
+            <div class="">{log.name}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">
+              {log.date}
+            </div>
           </div>
+
           <!-- svelte-ignore a11y_consider_explicit_label -->
           <button class="btn btn-square btn-ghost">
             <svg
@@ -60,3 +65,13 @@
     {/if}
   </div>
 </main>
+
+<footer
+  class="fixed bottom-0 left-0 right-0 p-4 bg-base-200/80 backdrop-blur-sm border-t border-base-300"
+>
+  <div class="container mx-auto">
+    <button class="btn btn-primary btn-block" onclick={createLog}>
+      New Entry
+    </button>
+  </div>
+</footer>
