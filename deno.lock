@@ -9,7 +9,9 @@
     "npm:@tauri-apps/cli@^2.8.4": "2.8.4",
     "npm:@tauri-apps/plugin-opener@^2.5.0": "2.5.0",
     "npm:autoprefixer@^10.4.21": "10.4.21_postcss@8.5.6",
+    "npm:cally@0.8": "0.8.0",
     "npm:daisyui@^5.1.27": "5.1.27",
+    "npm:date-fns@^4.1.0": "4.1.0",
     "npm:svelte-check@^4.3.2": "4.3.2_svelte@5.39.8__acorn@8.15.0_typescript@5.9.3",
     "npm:svelte@^5.39.8": "5.39.8_acorn@8.15.0",
     "npm:tailwindcss@^4.1.14": "4.1.14",
@@ -548,6 +550,9 @@
     "aria-query@5.3.2": {
       "integrity": "sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw=="
     },
+    "atomico@1.79.2": {
+      "integrity": "sha512-mshhLRMeIltNYbnQnqgnrvJ/uDa8XDfTQcjw3ymOygQqwHIQ4Sp0LcNYMCbACkV3DtV+eDXb9szwU4qMUuGwYQ=="
+    },
     "autoprefixer@10.4.21_postcss@8.5.6": {
       "integrity": "sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==",
       "dependencies": [
@@ -579,6 +584,12 @@
       ],
       "bin": true
     },
+    "cally@0.8.0": {
+      "integrity": "sha512-jvQ2QMrsZM/ZPG/LWTkJEUPrp/ew1uS2KjKA/E6ru7mVvTMY2JgSagci9IghLmuamFh1pDajrxXAX4Qgo4FHbw==",
+      "dependencies": [
+        "atomico"
+      ]
+    },
     "caniuse-lite@1.0.30001747": {
       "integrity": "sha512-mzFa2DGIhuc5490Nd/G31xN1pnBnYMadtkyTjefPI7wzypqgCEpeWu9bJr0OnDsyKrW75zA9ZAt7pbQFmwLsQg=="
     },
@@ -599,6 +610,9 @@
     },
     "daisyui@5.1.27": {
       "integrity": "sha512-oCC2RwjrGRPTeEpaXoNmYydzVfSRdyJCthFsi/Q5PErAvaoD8kDarxlW+wiPAx2WmM8W8lXvyAHJUqjObCMWOQ=="
+    },
+    "date-fns@4.1.0": {
+      "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
     "debug@4.4.3": {
       "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
@@ -993,7 +1007,9 @@
         "npm:@tauri-apps/cli@^2.8.4",
         "npm:@tauri-apps/plugin-opener@^2.5.0",
         "npm:autoprefixer@^10.4.21",
+        "npm:cally@0.8",
         "npm:daisyui@^5.1.27",
+        "npm:date-fns@^4.1.0",
         "npm:svelte-check@^4.3.2",
         "npm:svelte@^5.39.8",
         "npm:tailwindcss@^4.1.14",

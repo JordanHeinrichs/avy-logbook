@@ -1,14 +1,17 @@
 <script lang="ts">
   import "../style.css";
   import { goto } from "$app/navigation";
+  import Footer from "$lib/components/Footer.svelte";
 
   let { data } = $props();
 
   async function createLog() {
-    await goto(`/logs/`);
+    console.info(`Navigating to create new log.`);
+    await goto(`/logs/new`);
   }
 
   async function gotoLog(id: number) {
+    console.info(`Navigating to log ID ${id}.`);
     await goto(`/logs/${id}`);
   }
 </script>
@@ -34,7 +37,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
-          class="list-row pb-4 shadow-sm flex flex-row justify-between cursor-pointer items-center hover:bg-primary-content"
+          class="list-row shadow-sm flex flex-row justify-between cursor-pointer items-center hover:bg-primary-content"
           onclick={() => gotoLog(log.id)}
           aria-label="Go to log"
         >
@@ -66,12 +69,4 @@
   </div>
 </main>
 
-<footer
-  class="fixed bottom-0 left-0 right-0 p-4 bg-base-200/80 backdrop-blur-sm border-t border-base-300"
->
-  <div class="container mx-auto">
-    <button class="btn btn-primary btn-block" onclick={createLog}>
-      New Entry
-    </button>
-  </div>
-</footer>
+<Footer buttonText="New Entry" on:click={createLog} />

@@ -17,7 +17,9 @@
     "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-opener": "^2.5.0",
     "autoprefixer": "^10.4.21",
+    "cally": "^0.8.0",
     "daisyui": "^5.1.27",
+    "date-fns": "^4.1.0",
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
