@@ -30,7 +30,7 @@ fn log_list() -> Result<Vec<Log>, String> {
 fn create_log(name: String, date: String) -> Result<Log, String> {
     println!("Creating log entry with the name: {}, date: {}", name, date);
     Ok(Log {
-        id: 4,
+        id: 3,
         name: String::from("Grand Daddy"),
         date: String::from("2025-01-03"),
     })

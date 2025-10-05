@@ -2,7 +2,7 @@
   import "cally";
 
   import { invoke } from "@tauri-apps/api/core";
-  import type { Log } from "../../lib";
+  import type { Log } from "$lib/utils/types";
   import { goto } from "$app/navigation";
   import { format } from "date-fns";
 
@@ -15,7 +15,7 @@
   async function createLog(event: Event) {
     console.info(`Creating log, name: ${name}, date: ${date}`);
     const log: Log = await invoke("create_log", { name, date });
-    goto(`logs/${log.id}/edit/avy`);
+    goto(`/logs/${log.id}/edit/avy`);
   }
 
   function handleDateChange(event: any) {
