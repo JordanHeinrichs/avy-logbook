@@ -1,5 +1,5 @@
-export type Log = {
+export type Trip = {
   name: string;
-  date: Date;
+  tripDate: Date;
   id: number;
 };

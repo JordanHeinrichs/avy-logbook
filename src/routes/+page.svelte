@@ -5,14 +5,14 @@
 
   let { data } = $props();
 
-  async function createLog() {
+  async function createTrip() {
     console.info(`Navigating to create new log.`);
-    await goto(`/logs/new`);
+    await goto(`/trips/new`);
   }
 
-  async function gotoLog(id: number) {
+  async function gotoTrip(id: number) {
     console.info(`Navigating to log ID ${id}.`);
-    await goto(`/logs/${id}`);
+    await goto(`/trips/${id}`);
   }
 </script>
 
@@ -28,23 +28,23 @@
   </div>
 
   <div class="list bg-base-100 rounded-box shadow-md">
-    {#if data.logs.length === 0}
+    {#if data.trips.length === 0}
       <div class="list-row">
         <p>Add entry to get started.</p>
       </div>
     {:else}
-      {#each data.logs as log}
+      {#each data.trips as trip}
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
           class="list-row shadow-sm flex flex-row justify-between cursor-pointer items-center hover:bg-primary-content"
-          onclick={() => gotoLog(log.id)}
+          onclick={() => gotoTrip(trip.id)}
           aria-label="Go to log"
         >
           <div class="flex items-baseline gap-4">
-            <div class="">{log.name}</div>
+            <div class="">{trip.name}</div>
             <div class="text-xs uppercase font-semibold opacity-60">
-              {log.date}
+              {trip.tripDate}
             </div>
           </div>
 
@@ -69,4 +69,4 @@
   </div>
 </main>
 
-<Footer buttonText="New Entry" on:click={createLog} />
+<Footer buttonText="New Entry" on:click={createTrip} />

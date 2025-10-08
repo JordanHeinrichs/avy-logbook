@@ -1,73 +1,68 @@
-#[derive(serde::Serialize)]
-struct Log {
-    id: i32,
-    name: String,
-    date: String,
+use serde::Serialize;
+use std::fs;
+use tauri::Manager;
+use thiserror::Error;
+
+mod commands;
+mod db;
+
+#[derive(Debug, Error)]
+pub enum AppError {
+    #[error("Database error: {0}")]
+    Database(#[from] sqlx::Error),
+
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+
+    #[error("Validation error: {0}")]
+    Validation(String),
+
+    #[error("An unexpected error occurred: {0}")]
+    Anyhow(#[from] anyhow::Error),
 }
 
-#[tauri::command]
-fn log_list() -> Result<Vec<Log>, String> {
-    Ok(vec![
-        Log {
-            id: 3,
-            name: String::from("Mount Hector"),
-            date: String::from("2025-01-02"),
-        },
-        Log {
-            id: 2,
-            name: String::from("Little Sifton"),
-            date: String::from("2024-12-30"),
-        },
-        Log {
-            id: 1,
-            name: String::from("Ursus Trees"),
-            date: String::from("2024-12-29"),
-        },
-    ])
-}
-
-#[tauri::command]
-fn create_log(name: String, date: String) -> Result<Log, String> {
-    println!("Creating log entry with the name: {}, date: {}", name, date);
-    Ok(Log {
-        id: 3,
-        name: String::from("Grand Daddy"),
-        date: String::from("2025-01-03"),
-    })
-}
-
-#[tauri::command]
-fn fetch_log(id: i32) -> Result<Log, String> {
-    match id {
-        1 => Ok(Log {
-            id: 1,
-            name: String::from("Ursus Trees"),
-            date: String::from("2024-12-29"),
-        }),
-        2 => Ok(Log {
-            id: 2,
-            name: String::from("Little Sifton"),
-            date: String::from("2024-12-30"),
-        }),
-        3 => Ok(Log {
-            id: 3,
-            name: String::from("Mount Hector"),
-            date: String::from("2025-01-02"),
-        }),
-        4 => Ok(Log {
-            id: 4,
-            name: String::from("Grand Daddy"),
-            date: String::from("2025-01-03"),
-        }),
-        _ => Err(String::from("Unable to find log entry")),
+impl Serialize for AppError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let error_message = self.to_string();
+        serializer.serialize_str(&error_message)
     }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            // Get the platform-specific application data directory path
+            let app_data_dir = app
+                .path()
+                .app_data_dir()
+                .expect("Failed to get app data directory.");
+
+            // Check if the directory exists, and if not, create it
+            if !app_data_dir.exists() {
+                fs::create_dir_all(&app_data_dir)
+                    .expect("Failed to create application data directory.");
+            }
+
+            tauri::async_runtime::block_on(async move {
+                let database = db::Database::new(&app_data_dir)
+                    .await
+                    .expect("failed to initialize database");
+
+                // Store database pool in app state
+                app.manage(db::DatabaseState(database.pool));
+            });
+            Ok(())
+        })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![log_list, create_log, fetch_log])
+        .invoke_handler(tauri::generate_handler![
+            commands::trip_list,
+            commands::create_trip,
+            commands::fetch_trip
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -2,7 +2,7 @@
   import "cally";
 
   import { invoke } from "@tauri-apps/api/core";
-  import type { Log } from "$lib/utils/types";
+  import type { Trip } from "$lib/utils/types";
   import { goto } from "$app/navigation";
   import { format } from "date-fns";
 
@@ -10,21 +10,21 @@
   import Footer from "$lib/components/Footer.svelte";
 
   let name = $state("");
-  let date = $state(format(new Date(), "yyyy-MM-dd"));
+  let tripDate = $state(format(new Date(), "yyyy-MM-dd"));
 
-  async function createLog(event: Event) {
-    console.info(`Creating log, name: ${name}, date: ${date}`);
-    const log: Log = await invoke("create_log", { name, date });
-    goto(`/logs/${log.id}/edit/avy`);
+  async function createTrip(_event: Event) {
+    console.info(`Creating trip, name: ${name}, date: ${tripDate}`);
+    const trip: Trip = await invoke("create_trip", { name, tripDate });
+    goto(`/trips/${trip.id}/edit/avy`);
   }
 
   function handleDateChange(event: any) {
     console.info("Date changed:", event.target?.value);
-    date = event.target?.value;
+    tripDate = event.target?.value;
   }
 </script>
 
-<Header title="Add Log Entry" backHref="/" />
+<Header title="Add Trip" backHref="/" />
 
 <main class="p-4 flex flex-col items-center pt-4">
   <div class="w-full max-w-md space-y-4">
@@ -62,7 +62,7 @@
       id="date-input"
       class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
       showOutsideDays
-      value={date}
+      value={tripDate}
       on:change={handleDateChange}
     >
       <svg
@@ -84,4 +84,4 @@
   </div>
 </main>
 
-<Footer buttonText="Next" disabled={!name} on:click={createLog} />
+<Footer buttonText="Next" disabled={!name} on:click={createTrip} />

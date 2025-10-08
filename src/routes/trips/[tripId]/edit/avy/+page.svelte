@@ -5,7 +5,7 @@
   let { params } = $props();
 </script>
 
-<Header title="Avy Forecast" backHref={`/logs/${params.logId}`} />
+<Header title="Avy Forecast" backHref={`/trips/${params.tripId}`} />
 
 <main class="p-4 flex flex-col items-center pt-4">
   <div class="w-full max-w-md space-y-4">

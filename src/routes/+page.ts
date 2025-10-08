@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { Log } from "$lib/utils/types";
+import type { Trip } from "$lib/utils/types";
 
 export const load = async () => {
-  return { logs: (await invoke("log_list")) as Log[] };
+  return { trips: (await invoke("trip_list")) as Trip[] };
 };
