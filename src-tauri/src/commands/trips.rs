@@ -1,16 +1,8 @@
 use anyhow::Result;
-use sqlx::FromRow;
 
 use crate::db::DatabaseState;
+use crate::models::Trip;
 use crate::AppError;
-
-#[derive(serde::Serialize, FromRow, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Trip {
-    id: i64,
-    name: String,
-    trip_date: String,
-}
 
 #[tauri::command]
 pub async fn trip_list(state: tauri::State<'_, DatabaseState>) -> Result<Vec<Trip>, AppError> {

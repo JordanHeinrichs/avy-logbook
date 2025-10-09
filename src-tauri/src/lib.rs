@@ -5,6 +5,7 @@ use thiserror::Error;
 
 mod commands;
 mod db;
+mod models;
 
 #[derive(Debug, Error)]
 pub enum AppError {
@@ -46,6 +47,11 @@ pub fn run() {
                 fs::create_dir_all(&app_data_dir)
                     .expect("Failed to create application data directory.");
             }
+
+            println!(
+                "App data directory is {}",
+                app_data_dir.as_os_str().to_str().unwrap()
+            );
 
             tauri::async_runtime::block_on(async move {
                 let database = db::Database::new(&app_data_dir)
