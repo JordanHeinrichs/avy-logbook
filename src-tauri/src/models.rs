@@ -4,9 +4,11 @@ use sqlx::types::Type;
 use sqlx::Database;
 use sqlx::{encode::IsNull, Decode, Encode, FromRow, Sqlite};
 use std::ops::{Deref, DerefMut};
+use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum DangerRating {
     Low,
@@ -17,8 +19,9 @@ pub enum DangerRating {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum MacroTrend {
     Decreasing,
@@ -28,8 +31,9 @@ pub enum MacroTrend {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum Confidence {
     High,
@@ -38,8 +42,9 @@ pub enum Confidence {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum ProblemType {
     LooseDry,
@@ -52,8 +57,9 @@ pub enum ProblemType {
     DeepPersistentSlabs,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum Precipitation {
     Nothing,
@@ -65,8 +71,9 @@ pub enum Precipitation {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum Accumulation {
     Zero,
@@ -76,8 +83,9 @@ pub enum Accumulation {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum WindSpeed {
     Calm,
@@ -88,8 +96,9 @@ pub enum WindSpeed {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 pub enum WindDirection {
     N,
     NE,
@@ -102,8 +111,9 @@ pub enum WindDirection {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum SolarRadiation {
     None,
@@ -113,8 +123,9 @@ pub enum SolarRadiation {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum AvalancheSize {
     None,
@@ -124,8 +135,9 @@ pub enum AvalancheSize {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum AvalancheTrigger {
     Heavy,
@@ -135,8 +147,9 @@ pub enum AvalancheTrigger {
     Unknown,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum InstabilityObservation {
     None,
@@ -145,8 +158,9 @@ pub enum InstabilityObservation {
     Whumpf,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub enum TestResult {
     None,
@@ -156,7 +170,7 @@ pub enum TestResult {
 
 /// Enum for the multi-select question. This is for use in Rust logic.
 /// The database will still store a JSON string of selected options.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, TS)]
 #[serde(rename_all = "camelCase")]
 pub enum AreaToAvoid {
     TerrainTraps,
@@ -174,8 +188,9 @@ pub enum AreaToAvoid {
     OverheadHazard,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, sqlx::Type, TS)]
 #[sqlx(type_name = "TEXT")]
+#[ts(export)]
 pub enum Elevation {
     #[serde(rename = "ALP")]
     Alp,
@@ -185,7 +200,8 @@ pub enum Elevation {
     Btl,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
 pub struct AreasToAvoid(pub Vec<AreaToAvoid>);
 
 impl Deref for AreasToAvoid {
@@ -224,18 +240,23 @@ impl<'q> Encode<'q, Sqlite> for AreasToAvoid {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct Trip {
+    #[ts(type = "number")]
     pub id: i64,
     pub name: String,
     pub trip_date: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct AvalancheForecast {
+    #[ts(type = "number")]
     pub id: i64,
+    #[ts(type = "number")]
     pub trip_id: i64,
     pub forecast_alp: Option<DangerRating>,
     pub forecast_tl: Option<DangerRating>,
@@ -245,19 +266,25 @@ pub struct AvalancheForecast {
     pub comments: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct AvalancheProblem {
+    #[ts(type = "number")]
     pub id: i64,
+    #[ts(type = "number")]
     pub forecast_id: i64,
     pub elevation: Elevation,
     pub problem_type: ProblemType,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct TripPlanning {
+    #[ts(type = "number")]
     pub id: i64,
+    #[ts(type = "number")]
     pub trip_id: i64,
     pub areas_to_avoid: Option<AreasToAvoid>,
     pub plan_left_with_someone: bool,
@@ -265,10 +292,12 @@ pub struct TripPlanning {
     pub decision_points_comment: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldObservation {
+    #[ts(type = "number")]
     pub id: i64,
+    #[ts(type = "number")]
     pub trip_id: i64,
     pub observation_time: String,
 
@@ -294,7 +323,8 @@ pub struct FieldObservation {
 
 // --- Composite Struct for API Payloads ---
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct FullTripDetails {
     #[serde(flatten)]

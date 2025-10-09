@@ -191,3 +191,7 @@ Helpful commands:
 
 - Run: `deno task tauri dev`
 - Run mobile development: `deno task tauri [android|ios] dev --open`
+
+It uses ts-rs to generate matching types for typescript. To generate new bindings:
+
+- Run: `cargo test export_bindings`

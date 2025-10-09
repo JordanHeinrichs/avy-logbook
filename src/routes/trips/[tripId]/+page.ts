@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { Trip } from "$lib/utils/types";
+import type { Trip } from "$lib/types/Trip";
 
 export const load = async ({ params }) => {
   return {

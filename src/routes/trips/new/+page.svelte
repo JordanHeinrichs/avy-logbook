@@ -2,7 +2,7 @@
   import "cally";
 
   import { invoke } from "@tauri-apps/api/core";
-  import type { Trip } from "$lib/utils/types";
+  import type { Trip } from "$lib/types/Trip";
   import { goto } from "$app/navigation";
   import { format } from "date-fns";
 

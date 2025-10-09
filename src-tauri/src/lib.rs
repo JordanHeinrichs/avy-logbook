@@ -5,7 +5,7 @@ use thiserror::Error;
 
 mod commands;
 mod db;
-mod models;
+pub mod models;
 
 #[derive(Debug, Error)]
 pub enum AppError {
