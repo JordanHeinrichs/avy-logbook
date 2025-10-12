@@ -27,8 +27,6 @@ pub async fn create_trip(
     trip_date: String,
     state: tauri::State<'_, DatabaseState>,
 ) -> Result<Trip, AppError> {
-    // 1. --- Validation ---
-    // It's best practice to validate inputs in the backend.
     let trimmed_name = name.trim();
     if trimmed_name.is_empty() {
         return Err(AppError::Validation(

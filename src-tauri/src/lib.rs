@@ -67,7 +67,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::trip_list,
             commands::create_trip,
-            commands::fetch_trip
+            commands::fetch_trip,
+            commands::fetch_avy_forecast,
+            commands::edit_avy_forecast,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
