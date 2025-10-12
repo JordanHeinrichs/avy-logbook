@@ -68,6 +68,7 @@ pub fn run() {
             commands::trip_list,
             commands::create_trip,
             commands::fetch_trip,
+            commands::fetch_full_trip,
             commands::fetch_avy_forecast,
             commands::edit_avy_forecast,
         ])

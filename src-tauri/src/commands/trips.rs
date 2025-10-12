@@ -1,7 +1,7 @@
 use anyhow::Result;
 
 use crate::db::DatabaseState;
-use crate::models::Trip;
+use crate::models::{AvalancheForecast, FullTripDetails, Trip};
 use crate::AppError;
 
 #[tauri::command]
@@ -64,4 +64,43 @@ pub async fn fetch_trip(id: i64, state: tauri::State<'_, DatabaseState>) -> Resu
         .fetch_one(pool)
         .await?;
     Ok(trip)
+}
+
+#[tauri::command]
+pub async fn fetch_full_trip(
+    id: i64,
+    state: tauri::State<'_, DatabaseState>,
+) -> Result<FullTripDetails, AppError> {
+    let pool = &state.0;
+    let trip = sqlx::query_as::<_, Trip>("SELECT id, name, trip_date FROM trip WHERE id = ?")
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
+
+    let avy_forecast = sqlx::query_as::<_, AvalancheForecast>(
+        r#"
+        SELECT
+            id,
+            trip_id,
+            forecast_alp,
+            forecast_tl,
+            forecast_btl,
+            macro_trends,
+            confidence,
+            comments
+        FROM avalanche_forecast
+        WHERE trip_id = ?
+        "#,
+    )
+    .bind(id)
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(FullTripDetails {
+        trip,
+        forecast: avy_forecast,
+        planning: None,
+        problems: vec![],
+        observations: vec![],
+    })
 }

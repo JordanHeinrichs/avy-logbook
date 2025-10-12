@@ -35,7 +35,9 @@
   ];
 
   async function updateAndNext(_event: Event) {
-    const trip: AvalancheForecast = await invoke("edit_avy_forecast", forecast);
+    const trip: AvalancheForecast = await invoke("edit_avy_forecast", {
+      forecast,
+    });
     // goto(`/trips/${trip.id}/edit/weather`);
   }
 
