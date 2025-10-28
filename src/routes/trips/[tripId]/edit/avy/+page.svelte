@@ -50,15 +50,15 @@
 
     switch (rating) {
       case "low":
-        return `${base} ${selectedClass} btn-success`;
+        return `${base} ${selectedClass} btn-success --color-warning`;
       case "moderate":
         return `${base} ${selectedClass} btn-warning`;
       case "considerable":
-        return `${base} ${selectedClass} btn-accent`; // Accent is often orange/purple
+        return `${base} ${selectedClass} btn-accent`;
       case "high":
         return `${base} ${selectedClass} btn-error`;
       case "extreme":
-        return `${base} ${selectedClass} bg-black text-white border-black hover:bg-gray-700`;
+        return `${base} ${selectedClass} `;
       default:
         return `${base} ${selectedClass} btn-ghost`;
     }

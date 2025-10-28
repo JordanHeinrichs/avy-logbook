@@ -168,8 +168,6 @@ pub enum TestResult {
     PopDrop,
 }
 
-/// Enum for the multi-select question. This is for use in Rust logic.
-/// The database will still store a JSON string of selected options.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, TS)]
 #[serde(rename_all = "camelCase")]
 pub enum AreaToAvoid {
@@ -311,7 +309,7 @@ pub struct FieldObservation {
     // Avalanche Activity
     pub avy_activity_size: Option<AvalancheSize>,
     pub avy_activity_trigger: Option<AvalancheTrigger>,
-    pub avy_activity_characteristic: Option<ProblemType>, // Re-using ProblemType enum
+    pub avy_activity_characteristic: Option<ProblemType>,
 
     // Signs of Instability
     pub instability_see_feel: Option<InstabilityObservation>,
@@ -320,8 +318,6 @@ pub struct FieldObservation {
 
     pub comments: Option<String>,
 }
-
-// --- Composite Struct for API Payloads ---
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
