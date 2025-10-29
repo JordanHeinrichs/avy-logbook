@@ -14,10 +14,8 @@
 
   let { data }: { data: { trip: FullTripDetails } } = $props();
 
-  // Use the data prop directly
   const trip = data.trip;
 
-  // --- Navigation Functions ---
   async function editForecast() {
     goto(`/trips/${trip.id}/edit/avy`);
   }
@@ -25,7 +23,6 @@
     goto(`/trips/${trip.id}/edit/prep`);
   }
   async function editWeather(weatherId: number) {
-    // You'll need to decide if "forecast" (null time) has a special ID or route
     goto(`/trips/${trip.id}/edit/weather/${weatherId}`);
   }
   async function addWeatherObs() {
@@ -38,7 +35,6 @@
     goto(`/trips/${trip.id}/obs/avy/new`);
   }
 
-  // --- Display Maps (for human-readable enums) ---
   const ratingColors: Record<string, string> = {
     Low: "badge-success",
     Moderate: "badge-warning",
@@ -184,13 +180,9 @@
   `;
 </script>
 
-<Header title={trip.name} backHref="/" />
+<Header title={trip.name} subtitle={trip.tripDate} backHref="/" />
 
 <main class="container mx-auto p-4 flex flex-col gap-6 pb-20">
-  <div>
-    <h2 class="text-3xl font-bold text-secondary">{trip.tripDate}</h2>
-  </div>
-
   {#if trip.forecast}
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body">

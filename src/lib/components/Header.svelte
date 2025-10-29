@@ -8,6 +8,12 @@
   export let title: string;
 
   /**
+   * The subtitle to display to the right of the title.
+   * @type {string | null}
+   */
+  export let subtitle: string | null = null;
+
+  /**
    * The URL to navigate to when the back button is clicked.
    * If not provided, the back button will not be displayed.
    * @type {string | null}
@@ -43,9 +49,13 @@
     {/if}
   </div>
 
+  <!-- <span class="text-lg font-bold truncate max-w-full">{title}</span> -->
   <div class="flex-1 text-center">
     <h1 class="text-2xl font-bold text-primary">{title}</h1>
   </div>
-
-  <div class="w-16 mr-2"></div>
+  {#if subtitle}
+    <span class="text-sm text-base-content/70 mr-2">{subtitle}</span>
+  {:else}
+    <div class="w-16 mr-2"></div>
+  {/if}
 </header>
