@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS avalanche_forecast (
     forecast_btl TEXT,
     macro_trends TEXT,
     confidence TEXT,
-    comments TEXT,
+    comment TEXT,
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS avalanche_problem (
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS avalanche_problem (
     forecast_id INTEGER NOT NULL,
     elevation TEXT NOT NULL,
     problem_type TEXT NOT NULL,
-    FOREIGN KEY (forecast_id) REFERENCES trip(id) ON DELETE CASCADE
+    FOREIGN KEY (forecast_id) REFERENCES avalanche_forecast(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS trip_planning (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,17 +33,24 @@ CREATE TABLE IF NOT EXISTS trip_planning (
     decision_points_comment TEXT,
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
-CREATE TABLE IF NOT EXISTS field_observation (
+CREATE TABLE IF NOT EXISTS weather (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     trip_id INTEGER NOT NULL,
     -- ISO 8601 format: 'YYYY-MM-DDTHH:MM:SSZ'
-    observation_time TEXT NOT NULL,
-    -- Weather
+    observation_time TEXT,
     precipitation TEXT,
     accumulation TEXT,
     wind_speed TEXT,
     wind_direction TEXT,
     solar_radiation TEXT,
+    comment TEXT,
+    FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS avy_observation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trip_id INTEGER NOT NULL,
+    -- ISO 8601 format: 'YYYY-MM-DDTHH:MM:SSZ'
+    observation_time TEXT NOT NULL,
     -- Avalanche Activity
     avy_activity_size TEXT,
     avy_activity_trigger TEXT,
@@ -52,7 +59,7 @@ CREATE TABLE IF NOT EXISTS field_observation (
     instability_see_feel TEXT,
     instability_ct TEXT,
     instability_ect TEXT,
-    comments TEXT,
+    comment TEXT,
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TRIGGER IF NOT EXISTS trigger_trip_updated_at

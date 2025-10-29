@@ -187,7 +187,7 @@
       <textarea
         class="textarea textarea-bordered h-24"
         placeholder="e.g. Forecast notes, specific concerns..."
-        bind:value={forecast.comments}
+        bind:value={forecast.comment}
       ></textarea>
     </section>
   </div>

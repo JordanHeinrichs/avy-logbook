@@ -3,4 +3,4 @@ import type { Confidence } from "./Confidence";
 import type { DangerRating } from "./DangerRating";
 import type { MacroTrend } from "./MacroTrend";
 
-export type AvalancheForecast = { id: number, tripId: number, forecastAlp: DangerRating | null, forecastTl: DangerRating | null, forecastBtl: DangerRating | null, macroTrends: MacroTrend | null, confidence: Confidence | null, comments: string | null, };
+export type AvalancheForecast = { id: number, tripId: number, forecastAlp: DangerRating | null, forecastTl: DangerRating | null, forecastBtl: DangerRating | null, macroTrends: MacroTrend | null, confidence: Confidence | null, comment: string | null, };

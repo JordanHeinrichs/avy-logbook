@@ -17,7 +17,7 @@ pub async fn edit_avy_forecast(
             forecast_btl = $3,
             macro_trends = $4,
             confidence = $5,
-            comments = $6
+            comment = $6
         WHERE
             id = $7
         RETURNING *
@@ -29,7 +29,7 @@ pub async fn edit_avy_forecast(
         .bind(forecast.forecast_btl)
         .bind(forecast.macro_trends)
         .bind(forecast.confidence)
-        .bind(forecast.comments)
+        .bind(forecast.comment)
         .bind(forecast.id)
         .fetch_one(pool)
         .await?;
@@ -52,7 +52,7 @@ pub async fn fetch_avy_forecast(
             forecast_btl,
             macro_trends,
             confidence,
-            comments
+            comment
         FROM avalanche_forecast
         WHERE trip_id = ?
         "#,
@@ -83,7 +83,7 @@ pub async fn fetch_avy_forecast(
                 forecast_btl: None,
                 macro_trends: None,
                 confidence: None,
-                comments: None,
+                comment: None,
             };
             return Ok(new_forecast);
         }

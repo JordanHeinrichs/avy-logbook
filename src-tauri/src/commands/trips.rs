@@ -87,7 +87,7 @@ pub async fn fetch_full_trip(
             forecast_btl,
             macro_trends,
             confidence,
-            comments
+            comment
         FROM avalanche_forecast
         WHERE trip_id = ?
         "#,
@@ -101,6 +101,7 @@ pub async fn fetch_full_trip(
         forecast: avy_forecast,
         planning: None,
         problems: vec![],
-        observations: vec![],
+        weather_observations: vec![],
+        avy_observations: vec![],
     })
 }

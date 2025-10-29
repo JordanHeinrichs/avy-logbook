@@ -237,7 +237,6 @@ impl<'q> Encode<'q, Sqlite> for AreasToAvoid {
         Ok(IsNull::No)
     }
 }
-
 #[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
@@ -261,7 +260,7 @@ pub struct AvalancheForecast {
     pub forecast_btl: Option<DangerRating>,
     pub macro_trends: Option<MacroTrend>,
     pub confidence: Option<Confidence>,
-    pub comments: Option<String>,
+    pub comment: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
@@ -291,20 +290,31 @@ pub struct TripPlanning {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
 #[serde(rename_all = "camelCase")]
-pub struct FieldObservation {
+pub struct Weather {
     #[ts(type = "number")]
     pub id: i64,
     #[ts(type = "number")]
     pub trip_id: i64,
-    pub observation_time: String,
-
-    // Weather
+    pub observation_time: Option<String>,
     pub precipitation: Option<Precipitation>,
     pub accumulation: Option<Accumulation>,
     pub wind_speed: Option<WindSpeed>,
     pub wind_direction: Option<WindDirection>,
     pub solar_radiation: Option<SolarRadiation>,
+    pub comment: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
+#[ts(export)]
+#[serde(rename_all = "camelCase")]
+pub struct AvyObservation {
+    #[ts(type = "number")]
+    pub id: i64,
+    #[ts(type = "number")]
+    pub trip_id: i64,
+    pub observation_time: String,
 
     // Avalanche Activity
     pub avy_activity_size: Option<AvalancheSize>,
@@ -316,7 +326,7 @@ pub struct FieldObservation {
     pub instability_ct: Option<TestResult>,
     pub instability_ect: Option<TestResult>,
 
-    pub comments: Option<String>,
+    pub comment: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
@@ -330,5 +340,7 @@ pub struct FullTripDetails {
     pub planning: Option<TripPlanning>,
 
     pub problems: Vec<AvalancheProblem>,
-    pub observations: Vec<FieldObservation>,
+
+    pub weather_observations: Vec<Weather>,
+    pub avy_observations: Vec<AvyObservation>,
 }
