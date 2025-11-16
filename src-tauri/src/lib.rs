@@ -71,6 +71,9 @@ pub fn run() {
             commands::fetch_full_trip,
             commands::fetch_avy_forecast,
             commands::edit_avy_forecast,
+            commands::create_weather,
+            commands::edit_weather,
+            commands::fetch_weather,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
