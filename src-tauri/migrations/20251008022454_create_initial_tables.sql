@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS avalanche_problem (
     forecast_id INTEGER NOT NULL,
     elevation TEXT NOT NULL,
     problem_type TEXT NOT NULL,
-    FOREIGN KEY (forecast_id) REFERENCES avalanche_forecast(id) ON DELETE CASCADE
+    FOREIGN KEY (forecast_id) REFERENCES avalanche_forecast(id) ON DELETE CASCADE,
+    UNIQUE (forecast_id, elevation, problem_type)
 );
 CREATE TABLE IF NOT EXISTS trip_planning (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

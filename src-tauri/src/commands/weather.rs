@@ -20,15 +20,16 @@ pub async fn create_weather(
             wind_direction,
             solar_radiation,
             comment)
-        VALUES
-            trip_id = $1,
-            observation_time = $2,
-            precipitation = $3,
-            accumulation = $4,
-            wind_speed = $5,
-            wind_direction = $6,
-            solar_radiation = $7,
-            comment = $8
+        VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8
+        )
         RETURNING *
     "#;
 

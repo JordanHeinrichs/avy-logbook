@@ -1,7 +1,7 @@
 use anyhow::Result;
 
 use crate::db::DatabaseState;
-use crate::models::AvalancheForecast;
+use crate::models::{AvalancheForecast, AvalancheProblem, Elevation, ProblemType};
 use crate::AppError;
 
 #[tauri::command]
@@ -88,4 +88,80 @@ pub async fn fetch_avy_forecast(
             return Ok(new_forecast);
         }
     }
+}
+
+#[tauri::command]
+pub async fn fetch_avy_problems(
+    forecast_id: i64,
+    state: tauri::State<'_, DatabaseState>,
+) -> Result<Vec<AvalancheProblem>, AppError> {
+    let pool = &state.0;
+    let avy_problems = sqlx::query_as::<_, AvalancheProblem>(
+        r#"
+        SELECT
+            id,
+            forecast_id,
+            elevation,
+            problem_type
+        FROM avalanche_problem
+        WHERE forecast_id = ?
+        "#,
+    )
+    .bind(forecast_id)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(avy_problems)
+}
+
+#[tauri::command]
+pub async fn create_avy_problem(
+    forecast_id: i64,
+    elevation: Elevation,
+    problem_type: ProblemType,
+    state: tauri::State<'_, DatabaseState>,
+) -> Result<AvalancheProblem, AppError> {
+    let pool = &state.0;
+
+    let avy_problems = sqlx::query_as::<_, AvalancheProblem>(
+        r#"
+        INSERT INTO avalanche_problem (
+            forecast_id,
+            elevation,
+            problem_type
+        )
+        VALUES (
+            $1,
+            $2,
+            $3
+        )
+        RETURNING *
+        "#,
+    )
+    .bind(forecast_id)
+    .bind(elevation)
+    .bind(problem_type)
+    .fetch_one(pool)
+    .await?;
+
+    Ok(avy_problems)
+}
+
+#[tauri::command]
+pub async fn delete_avy_problem(
+    id: i64,
+    state: tauri::State<'_, DatabaseState>,
+) -> Result<bool, AppError> {
+    let pool = &state.0;
+
+    sqlx::query(
+        r#"
+        DELETE FROM avalanche_problem WHERE id = $1
+        "#,
+    )
+    .bind(id)
+    .execute(pool)
+    .await?;
+
+    Ok(true)
 }

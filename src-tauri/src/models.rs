@@ -337,7 +337,7 @@ pub struct FullTripDetails {
     pub forecast: Option<AvalancheForecast>,
     pub planning: Option<TripPlanning>,
 
-    pub problems: Vec<AvalancheProblem>,
+    pub forecast_problems: Vec<AvalancheProblem>,
 
     pub weather_observations: Vec<Weather>,
     pub avy_observations: Vec<AvyObservation>,

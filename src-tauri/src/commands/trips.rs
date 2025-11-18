@@ -1,7 +1,7 @@
 use anyhow::Result;
 
 use crate::db::DatabaseState;
-use crate::models::{AvalancheForecast, FullTripDetails, Trip, Weather};
+use crate::models::{AvalancheForecast, AvalancheProblem, FullTripDetails, Trip, Weather};
 use crate::AppError;
 
 #[tauri::command]
@@ -117,11 +117,31 @@ pub async fn fetch_full_trip(
     .fetch_all(pool)
     .await?;
 
+    let forecast_problems = match (&avy_forecast) {
+        Some(forecast) => {
+            sqlx::query_as::<_, AvalancheProblem>(
+                r#"
+                SELECT
+                    id,
+                    forecast_id,
+                    elevation,
+                    problem_type
+                FROM avalanche_problem
+                WHERE forecast_id = ?
+                "#,
+            )
+            .bind(forecast.id.clone())
+            .fetch_all(pool)
+            .await?
+        }
+        None => vec![],
+    };
+
     Ok(FullTripDetails {
         trip,
         forecast: avy_forecast,
         planning: None,
-        problems: vec![],
+        forecast_problems: forecast_problems,
         weather_observations: weather,
         avy_observations: vec![],
     })
