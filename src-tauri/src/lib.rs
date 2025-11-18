@@ -77,6 +77,9 @@ pub fn run() {
             commands::create_weather,
             commands::edit_weather,
             commands::fetch_weather,
+            commands::create_plan,
+            commands::edit_plan,
+            commands::fetch_plan,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

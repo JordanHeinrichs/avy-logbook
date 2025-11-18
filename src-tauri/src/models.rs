@@ -278,9 +278,7 @@ pub struct AvalancheProblem {
 #[derive(Serialize, Deserialize, Debug, Clone, FromRow, TS)]
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
-pub struct TripPlanning {
-    #[ts(type = "number")]
-    pub id: i64,
+pub struct TripPlan {
     #[ts(type = "number")]
     pub trip_id: i64,
     pub areas_to_avoid: Option<AreasToAvoid>,
@@ -335,9 +333,9 @@ pub struct FullTripDetails {
     pub trip: Trip,
 
     pub forecast: Option<AvalancheForecast>,
-    pub planning: Option<TripPlanning>,
-
     pub forecast_problems: Vec<AvalancheProblem>,
+
+    pub plan: Option<TripPlan>,
 
     pub weather_observations: Vec<Weather>,
     pub avy_observations: Vec<AvyObservation>,

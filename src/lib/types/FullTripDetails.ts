@@ -2,7 +2,7 @@
 import type { AvalancheForecast } from "./AvalancheForecast";
 import type { AvalancheProblem } from "./AvalancheProblem";
 import type { AvyObservation } from "./AvyObservation";
-import type { TripPlanning } from "./TripPlanning";
+import type { TripPlan } from "./TripPlan";
 import type { Weather } from "./Weather";
 
-export type FullTripDetails = { forecast: AvalancheForecast | null, planning: TripPlanning | null, problems: Array<AvalancheProblem>, weatherObservations: Array<Weather>, avyObservations: Array<AvyObservation>, id: number, name: string, tripDate: string, };
+export type FullTripDetails = { forecast: AvalancheForecast | null, forecastProblems: Array<AvalancheProblem>, plan: TripPlan | null, weatherObservations: Array<Weather>, avyObservations: Array<AvyObservation>, id: number, name: string, tripDate: string, };
