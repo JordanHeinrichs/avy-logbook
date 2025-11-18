@@ -80,6 +80,9 @@ pub fn run() {
             commands::create_plan,
             commands::edit_plan,
             commands::fetch_plan,
+            commands::create_avy_observation,
+            commands::edit_avy_observation,
+            commands::fetch_avy_observations,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::db::DatabaseState;
 use crate::models::{
-    AvalancheForecast, AvalancheProblem, FullTripDetails, Trip, TripPlan, Weather,
+    AvalancheForecast, AvalancheProblem, AvyObservation, FullTripDetails, Trip, TripPlan, Weather,
 };
 use crate::AppError;
 
@@ -155,12 +155,33 @@ pub async fn fetch_full_trip(
     .fetch_optional(pool)
     .await?;
 
+    let avy_observations = sqlx::query_as::<_, AvyObservation>(
+        r#"
+        SELECT
+            trip_id
+            observation_time,
+            avy_activity_size,
+            avy_activity_trigger,
+            avy_activity_characteristic,
+            instability_see_feel,
+            instability_ct,
+            instability_ect,
+            comment
+        FROM avy_observation
+        WHERE
+            trip_id = $1
+        "#,
+    )
+    .bind(id)
+    .fetch_all(pool)
+    .await?;
+
     Ok(FullTripDetails {
         trip,
         forecast: avy_forecast,
         forecast_problems,
         plan,
         weather_observations: weather,
-        avy_observations: vec![],
+        avy_observations,
     })
 }

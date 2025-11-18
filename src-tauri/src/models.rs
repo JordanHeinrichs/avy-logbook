@@ -307,8 +307,6 @@ pub struct Weather {
 #[serde(rename_all = "camelCase")]
 pub struct AvyObservation {
     #[ts(type = "number")]
-    pub id: i64,
-    #[ts(type = "number")]
     pub trip_id: i64,
     pub observation_time: String,
 
