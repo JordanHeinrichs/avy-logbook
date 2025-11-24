@@ -38,7 +38,7 @@
     });
 
     if (data.wizard) {
-      goto(`/trips/${params.tripId}/prep?wizard=true`);
+      goto(`/trips/${params.tripId}/plan`);
     } else {
       goto(`/trips/${params.tripId}`);
     }

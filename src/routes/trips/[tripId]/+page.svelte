@@ -19,8 +19,8 @@
   async function editForecast() {
     goto(`/trips/${trip.id}/avy`);
   }
-  async function editTripInfo() {
-    goto(`/trips/${trip.id}/edit/prep`);
+  async function editTripPlan() {
+    goto(`/trips/${trip.id}/plan`);
   }
   async function editWeather(weatherId: number) {
     goto(`/trips/${trip.id}/weather/${weatherId}`);
@@ -293,7 +293,7 @@
           <button
             class="btn btn-ghost btn-sm btn-circle"
             title="Edit Trip Prep"
-            onclick={editTripInfo}
+            onclick={editTripPlan}
           >
             {@html PencilIcon}
           </button>
@@ -351,7 +351,7 @@
         <h2 class="card-title">No Trip Prep Found</h2>
         <p>Add trip preparation details.</p>
         <div class="card-actions">
-          <button class="btn btn-primary" onclick={editTripInfo}
+          <button class="btn btn-primary" onclick={editTripPlan}
             >Add Prep Details</button
           >
         </div>

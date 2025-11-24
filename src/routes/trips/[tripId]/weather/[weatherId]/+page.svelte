@@ -9,8 +9,6 @@
   let weather = $state(data.weather);
 
   async function handleSave() {
-    console.log("in Save");
-    console.log(weather);
     if (!weather) return;
 
     await invoke("edit_weather", {
