@@ -5,4 +5,4 @@ import type { SolarRadiation } from "./SolarRadiation";
 import type { WindDirection } from "./WindDirection";
 import type { WindSpeed } from "./WindSpeed";
 
-export type Weather = { id: number, tripId: number, observationTime: string | null, precipitation: Precipitation | null, accumulation: Accumulation | null, windSpeed: WindSpeed | null, windDirection: WindDirection | null, solarRadiation: SolarRadiation | null, comment: string | null, };
+export type NewWeather = { tripId: number, observationTime: string | null, precipitation: Precipitation | null, accumulation: Accumulation | null, windSpeed: WindSpeed | null, windDirection: WindDirection | null, solarRadiation: SolarRadiation | null, comment: string | null, };

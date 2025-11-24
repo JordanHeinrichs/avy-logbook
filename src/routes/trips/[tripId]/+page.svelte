@@ -17,22 +17,22 @@
   const trip = data.trip;
 
   async function editForecast() {
-    goto(`/trips/${trip.id}/edit/avy`);
+    goto(`/trips/${trip.id}/avy`);
   }
   async function editTripInfo() {
     goto(`/trips/${trip.id}/edit/prep`);
   }
   async function editWeather(weatherId: number) {
-    goto(`/trips/${trip.id}/edit/weather/${weatherId}`);
+    goto(`/trips/${trip.id}/weather/${weatherId}`);
   }
   async function addWeatherObs() {
-    goto(`/trips/${trip.id}/obs/weather/new`);
+    goto(`/trips/${trip.id}/weather/new`);
   }
-  async function editAvyObs(obsId: number) {
-    goto(`/trips/${trip.id}/obs/avy/${obsId}`);
+  async function editAvyObs(obsTime: string) {
+    goto(`/trips/${trip.id}/avy_obs/${obsTime}`);
   }
   async function addAvyObs() {
-    goto(`/trips/${trip.id}/obs/avy/new`);
+    goto(`/trips/${trip.id}/avy_obs/new`);
   }
 
   const ratingColors: Record<string, string> = {
@@ -144,17 +144,17 @@
   // --- Computed (Derived) Values ---
   // Use Svelte 5 $derived rune to compute problem lists
   const alpProblems = $derived(
-    trip.problems
+    trip.forecastProblems
       .filter((p) => p.elevation === "ALP")
       .map((p) => problemTypeMap[p.problemType] || p.problemType)
   );
   const tlProblems = $derived(
-    trip.problems
+    trip.forecastProblems
       .filter((p) => p.elevation === "TL")
       .map((p) => problemTypeMap[p.problemType] || p.problemType)
   );
   const btlProblems = $derived(
-    trip.problems
+    trip.forecastProblems
       .filter((p) => p.elevation === "BTL")
       .map((p) => problemTypeMap[p.problemType] || p.problemType)
   );
@@ -285,7 +285,7 @@
     </div>
   {/if}
 
-  {#if trip.planning}
+  {#if trip.plan}
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body">
         <div class="card-title flex justify-between items-center">
@@ -302,8 +302,8 @@
         <div>
           <h4 class="font-bold">Areas to Avoid:</h4>
           <div class="flex flex-wrap gap-2 mt-2">
-            {#if (trip.planning.areasToAvoid ?? []).length > 0}
-              {#each trip.planning.areasToAvoid ?? [] as area}
+            {#if (trip.plan.areasToAvoid ?? []).length > 0}
+              {#each trip.plan.areasToAvoid ?? [] as area}
                 <span class="badge badge-lg badge-outline"
                   >{getReadable(areaToAvoidMap, area)}</span
                 >
@@ -317,7 +317,7 @@
         <div class="grid grid-cols-2 gap-4 mt-4">
           <div>
             <strong>Trip plan left?</strong>
-            {#if trip.planning.planLeftWithSomeone}
+            {#if trip.plan.planLeftWithSomeone}
               <span class="badge badge-success ml-2">Yes</span>
             {:else}
               <span class="badge badge-error ml-2">No</span>
@@ -325,7 +325,7 @@
           </div>
           <div>
             <strong>Decision points?</strong>
-            {#if trip.planning.decisionPointsConsidered}
+            {#if trip.plan.decisionPointsConsidered}
               <span class="badge badge-success ml-2">Yes</span>
             {:else}
               <span class="badge badge-error ml-2">No</span>
@@ -333,13 +333,13 @@
           </div>
         </div>
 
-        {#if trip.planning.decisionPointsComment}
+        {#if trip.plan.decisionPointsComment}
           <div class="mt-4">
             <h4 class="font-bold">Decision Points Comment:</h4>
             <p
               class="text-base-content/80 p-3 bg-base-100 rounded-lg whitespace-pre-wrap"
             >
-              {trip.planning.decisionPointsComment}
+              {trip.plan.decisionPointsComment}
             </p>
           </div>
         {/if}
@@ -473,7 +473,7 @@
 
       <div class="flex flex-col gap-2 mt-4">
         {#if trip.avyObservations.length > 0}
-          {#each trip.avyObservations as obs (obs.id)}
+          {#each trip.avyObservations as obs (obs.observationTime)}
             <div class="collapse collapse-arrow bg-base-100">
               <input type="radio" name="obs-accordion" />
               <div class="collapse-title text-lg font-medium">
@@ -483,7 +483,7 @@
                 <button
                   class="btn btn-xs btn-outline btn-secondary absolute top-3 right-12"
                   title="Edit Observation"
-                  onclick={() => editAvyObs(obs.id)}
+                  onclick={() => editAvyObs(obs.observationTime)}
                 >
                   Edit
                 </button>

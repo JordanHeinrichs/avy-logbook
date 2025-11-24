@@ -15,7 +15,7 @@
   async function createTrip(_event: Event) {
     console.info(`Creating trip, name: ${name}, date: ${tripDate}`);
     const trip: Trip = await invoke("create_trip", { name, tripDate });
-    goto(`/trips/${trip.id}/edit/avy`);
+    goto(`/trips/${trip.id}/avy?wizard=true`);
   }
 
   function handleDateChange(event: any) {

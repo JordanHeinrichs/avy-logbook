@@ -2,7 +2,6 @@
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
   import { invoke } from "@tauri-apps/api/core";
-  import type { AvalancheForecast } from "$lib/types/AvalancheForecast.js";
   import { goto } from "$app/navigation";
   import type { DangerRating } from "$lib/types/DangerRating";
   import type { MacroTrend } from "$lib/types/MacroTrend";
@@ -62,15 +61,13 @@
     await invoke("edit_avy_forecast", {
       forecast,
     });
-    // const weatherForecast = data.weatherObservations.find(
-    //   (w) => w.observationTime == null
-    // );
-    // const weatherId = weatherForecast ? weatherForecast.id : "new";
 
-    goto(`/trips/${params.tripId}/edit/weather/new`);
+    if (data.wizard) {
+      await goto(`/trips/${params.tripId}/weather/new?plan=true&wizard=true`);
+    } else {
+      await goto(`/trips/${params.tripId}`);
+    }
   }
-
-  // --- STYLING FUNCTIONS ---
 
   function getDangerRatingClass(
     rating: DangerRating,
@@ -218,4 +215,4 @@
   </div>
 </main>
 
-<Footer buttonText="Next" on:click={updateAndNext} />
+<Footer buttonText={data.wizard ? "Next" : "Back"} on:click={updateAndNext} />

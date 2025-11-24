@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS trip_plan (
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS weather (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     trip_id INTEGER NOT NULL,
     -- ISO 8601 format: 'YYYY-MM-DDTHH:MM:SSZ'
     observation_time TEXT,
@@ -43,7 +44,6 @@ CREATE TABLE IF NOT EXISTS weather (
     wind_direction TEXT,
     solar_radiation TEXT,
     comment TEXT,
-    PRIMARY KEY (trip_id, observation_time),
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS avy_observation (

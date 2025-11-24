@@ -1,12 +1,12 @@
 use anyhow::Result;
 
 use crate::db::DatabaseState;
-use crate::models::Weather;
+use crate::models::{NewWeather, Weather};
 use crate::AppError;
 
 #[tauri::command]
 pub async fn create_weather(
-    weather: Weather,
+    weather: NewWeather,
     state: tauri::State<'_, DatabaseState>,
 ) -> Result<Weather, AppError> {
     let pool = &state.0;
@@ -49,14 +49,14 @@ pub async fn create_weather(
 
 #[tauri::command]
 pub async fn fetch_weather(
-    trip_id: i64,
-    observation_time: Option<String>,
+    id: i64,
     state: tauri::State<'_, DatabaseState>,
 ) -> Result<Weather, AppError> {
     let pool = &state.0;
 
     let query = r#"
         SELECT
+            id,
             trip_id,
             observation_time,
             precipitation,
@@ -66,26 +66,12 @@ pub async fn fetch_weather(
             solar_radiation,
             comment
         FROM weather
-        WHERE trip_id = $1
+        WHERE id = $1
         "#;
-
-    let fetched = match observation_time {
-        Some(observation_time) => {
-            let query = format!("{} AND observation_time = $2", query);
-            sqlx::query_as::<_, Weather>(query.as_str())
-                .bind(trip_id)
-                .bind(observation_time)
-                .fetch_one(pool)
-                .await?
-        }
-        None => {
-            let query = format!("{} AND observation_time IS NULL", query);
-            sqlx::query_as::<_, Weather>(query.as_str())
-                .bind(trip_id)
-                .fetch_one(pool)
-                .await?
-        }
-    };
+    let fetched = sqlx::query_as::<_, Weather>(query)
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
     Ok(fetched)
 }
 
@@ -103,39 +89,23 @@ pub async fn edit_weather(
             wind_speed = $3,
             wind_direction = $4,
             solar_radiation = $5,
-            comment = $6
+            comment = $6,
+            observation_time = $7
         WHERE
-            trip_id = $7
+            id = $8
+        RETURNING *
         "#;
 
-    let updated = match weather.observation_time {
-        Some(observation_time) => {
-            let query = format!("{} AND observation_time = $8 RETURNING *", query);
-            sqlx::query_as::<_, Weather>(query.as_str())
-                .bind(weather.precipitation)
-                .bind(weather.accumulation)
-                .bind(weather.wind_speed)
-                .bind(weather.wind_direction)
-                .bind(weather.solar_radiation)
-                .bind(weather.comment)
-                .bind(weather.trip_id)
-                .bind(observation_time)
-                .fetch_one(pool)
-                .await?
-        }
-        None => {
-            let query = format!("{} AND observation_time IS NULL RETURNING *", query);
-            sqlx::query_as::<_, Weather>(query.as_str())
-                .bind(weather.precipitation)
-                .bind(weather.accumulation)
-                .bind(weather.wind_speed)
-                .bind(weather.wind_direction)
-                .bind(weather.solar_radiation)
-                .bind(weather.comment)
-                .bind(weather.trip_id)
-                .fetch_one(pool)
-                .await?
-        }
-    };
+    let updated = sqlx::query_as::<_, Weather>(query)
+        .bind(weather.precipitation)
+        .bind(weather.accumulation)
+        .bind(weather.wind_speed)
+        .bind(weather.wind_direction)
+        .bind(weather.solar_radiation)
+        .bind(weather.comment)
+        .bind(weather.observation_time)
+        .bind(weather.id)
+        .fetch_one(pool)
+        .await?;
     Ok(updated)
 }

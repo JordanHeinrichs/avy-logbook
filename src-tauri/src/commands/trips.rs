@@ -101,6 +101,7 @@ pub async fn fetch_full_trip(
     let weather = sqlx::query_as::<_, Weather>(
         r#"
         SELECT
+            id,
             trip_id,
             observation_time,
             precipitation,
@@ -111,7 +112,7 @@ pub async fn fetch_full_trip(
             comment
         FROM weather
         WHERE trip_id = ?
-        SORT BY
+        ORDER BY
             observation_time ASC NULLS FIRST
         "#,
     )
