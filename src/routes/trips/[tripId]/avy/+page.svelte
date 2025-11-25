@@ -3,6 +3,7 @@
   import Footer from "$lib/components/Footer.svelte";
   import { invoke } from "@tauri-apps/api/core";
   import { goto } from "$app/navigation";
+  import AvyProblemEditor from "$lib/components/AvyProblemEditor.svelte";
   import type { DangerRating } from "$lib/types/DangerRating";
   import type { MacroTrend } from "$lib/types/MacroTrend";
   import type { Confidence } from "$lib/types/Confidence";
@@ -10,6 +11,7 @@
   let { params, data } = $props();
 
   const forecast = $state(data.avy);
+  let problems = $state(data.problems);
 
   // --- Enums & Display Maps (camelCase) ---
   const DANGER_RATINGS: DangerRating[] = [
@@ -197,6 +199,13 @@
             </button>
           {/each}
         </div>
+      </section>
+
+      <div class="divider my-4"></div>
+
+      <section class="form-control w-full">
+        <h3 class="text-xl font-bold mb-4">Avalanche Problems</h3>
+        <AvyProblemEditor forecastId={forecast.id} bind:problems />
       </section>
 
       <div class="divider my-4"></div>
