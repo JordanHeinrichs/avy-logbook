@@ -1,5 +1,6 @@
 # from rust
 target/
+build/
 
 # from svelte
 .svelte-kit/

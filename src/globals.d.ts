@@ -10,9 +10,11 @@ type MapEvents<T> = {
 
 declare module "svelte/elements" {
   interface SvelteHTMLElements {
-    "calendar-range": MapEvents<CalendarRangeProps>;
-    "calendar-month": MapEvents<CalendarMonthProps>;
-    "calendar-date": MapEvents<CalendarDateProps>;
+    "calendar-range": HTMLAttributes<HTMLElement> &
+      MapEvents<CalendarRangeProps>;
+    "calendar-month": HTMLAttributes<HTMLElement> &
+      MapEvents<CalendarMonthProps>;
+    "calendar-date": HTMLAttributes<HTMLElement> & MapEvents<CalendarDateProps>;
   }
   interface SVGAttributes<T extends EventTarget> {
     slot?: string | null;

@@ -4,10 +4,13 @@
   import type { ProblemType } from "$lib/types/ProblemType";
   import type { Elevation } from "$lib/types/Elevation";
 
-  let { forecastId, problems = $bindable<AvalancheProblem[]>() } = $props<{
+  let {
+    forecastId,
+    problems = $bindable<AvalancheProblem[]>(),
+  }: {
     forecastId: number;
     problems: AvalancheProblem[];
-  }>();
+  } = $props();
 
   // --- Configuration ---
   const ELEVATIONS: Elevation[] = ["ALP", "TL", "BTL"];

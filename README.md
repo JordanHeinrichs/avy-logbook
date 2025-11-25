@@ -195,3 +195,10 @@ Helpful commands:
 It uses ts-rs to generate matching types for typescript. To generate new bindings:
 
 - Run: `cargo test export_bindings`
+
+Android Debugging setup:
+
+1. Install android studio: https://v2.tauri.app/start/prerequisites/#android
+2. `deno task tauri android dev` to run hot reloading
+3. `deno task tauri android build --debug --apk` to build debug apk
+4. `adb install <filename>` to install
