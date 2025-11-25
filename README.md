@@ -17,7 +17,7 @@ Either selecting a previous trip or creating a new trip will bring the user to t
 On the top it will have the name and date, with a pencil icon on the top right, if open pops up editing modal.
 If this is being created for the first time then name and date editing modal is automatically opened.
 
-![Home Page Rough Markup](./docs/SketchHomePage.png)
+![Home Page](./docs/homepage.png)
 
 On the trip page there are 3 sections:
 
