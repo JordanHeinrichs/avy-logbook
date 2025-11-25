@@ -5,4 +5,4 @@ import type { InstabilityObservation } from "./InstabilityObservation";
 import type { ProblemType } from "./ProblemType";
 import type { TestResult } from "./TestResult";
 
-export type AvyObservation = { id: number, tripId: number, observationTime: string, avyActivitySize: AvalancheSize | null, avyActivityTrigger: AvalancheTrigger | null, avyActivityCharacteristic: ProblemType | null, instabilitySeeFeel: InstabilityObservation | null, instabilityCt: TestResult | null, instabilityEct: TestResult | null, comment: string | null, };
+export type NewAvyObservation = { tripId: number, observationTime: string, avyActivitySize: AvalancheSize | null, avyActivityTrigger: AvalancheTrigger | null, avyActivityCharacteristic: ProblemType | null, instabilitySeeFeel: InstabilityObservation | null, instabilityCt: TestResult | null, instabilityEct: TestResult | null, comment: string | null, };

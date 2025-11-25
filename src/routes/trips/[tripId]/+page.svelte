@@ -28,8 +28,8 @@
   async function addWeatherObs() {
     goto(`/trips/${trip.id}/weather/new`);
   }
-  async function editAvyObs(obsTime: string) {
-    goto(`/trips/${trip.id}/avy_obs/${obsTime}`);
+  async function editAvyObs(id: number) {
+    goto(`/trips/${trip.id}/avy_obs/${id}`);
   }
   async function addAvyObs() {
     goto(`/trips/${trip.id}/avy_obs/new`);
@@ -473,7 +473,7 @@
 
       <div class="flex flex-col gap-2 mt-4">
         {#if trip.avyObservations.length > 0}
-          {#each trip.avyObservations as obs (obs.observationTime)}
+          {#each trip.avyObservations as obs (obs.id)}
             <div class="collapse collapse-arrow bg-base-100">
               <input type="radio" name="obs-accordion" />
               <div class="collapse-title text-lg font-medium">
@@ -483,7 +483,7 @@
                 <button
                   class="btn btn-xs btn-outline btn-secondary absolute top-3 right-12"
                   title="Edit Observation"
-                  onclick={() => editAvyObs(obs.observationTime)}
+                  onclick={() => editAvyObs(obs.id)}
                 >
                   Edit
                 </button>

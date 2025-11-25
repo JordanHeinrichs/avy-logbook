@@ -1,12 +1,12 @@
 use anyhow::Result;
 
 use crate::db::DatabaseState;
-use crate::models::AvyObservation;
+use crate::models::{AvyObservation, NewAvyObservation};
 use crate::AppError;
 
 #[tauri::command]
 pub async fn create_avy_observation(
-    avy_observation: AvyObservation,
+    avy_observation: NewAvyObservation,
     state: tauri::State<'_, DatabaseState>,
 ) -> Result<AvyObservation, AppError> {
     let pool = &state.0;
@@ -51,16 +51,17 @@ pub async fn create_avy_observation(
 }
 
 #[tauri::command]
-pub async fn fetch_avy_observations(
-    trip_id: i64,
+pub async fn fetch_avy_observation(
+    id: i64,
     state: tauri::State<'_, DatabaseState>,
-) -> Result<Vec<AvyObservation>, AppError> {
+) -> Result<AvyObservation, AppError> {
     let pool = &state.0;
 
     let fetched = sqlx::query_as::<_, AvyObservation>(
         r#"
         SELECT
-            trip_id
+            id,
+            trip_id,
             observation_time,
             avy_activity_size,
             avy_activity_trigger,
@@ -71,11 +72,11 @@ pub async fn fetch_avy_observations(
             comment
         FROM avy_observation
         WHERE
-            trip_id = $1
+            id = $1
         "#,
     )
-    .bind(trip_id)
-    .fetch_all(pool)
+    .bind(id)
+    .fetch_one(pool)
     .await?;
 
     Ok(fetched)
@@ -96,11 +97,10 @@ pub async fn edit_avy_observation(
             avy_activity_characteristic = $3,
             instability_see_feel = $4,
             instability_ct = $5,
-            instability_ect = $6
+            instability_ect = $6,
             comment = $7
         WHERE
-            trip_id = $8
-            AND observation_time = $9
+            id = $8
         RETURNING *
         "#,
     )
@@ -111,8 +111,7 @@ pub async fn edit_avy_observation(
     .bind(avy_observation.instability_ct)
     .bind(avy_observation.instability_ect)
     .bind(avy_observation.comment)
-    .bind(avy_observation.trip_id)
-    .bind(avy_observation.observation_time)
+    .bind(avy_observation.id)
     .fetch_one(pool)
     .await?;
 

@@ -159,7 +159,8 @@ pub async fn fetch_full_trip(
     let avy_observations = sqlx::query_as::<_, AvyObservation>(
         r#"
         SELECT
-            trip_id
+            id,
+            trip_id,
             observation_time,
             avy_activity_size,
             avy_activity_trigger,

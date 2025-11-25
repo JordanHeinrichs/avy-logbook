@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS weather (
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS avy_observation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     trip_id INTEGER NOT NULL,
     -- ISO 8601 format: 'YYYY-MM-DDTHH:MM:SSZ'
     observation_time TEXT NOT NULL,
@@ -59,7 +60,6 @@ CREATE TABLE IF NOT EXISTS avy_observation (
     instability_ct TEXT,
     instability_ect TEXT,
     comment TEXT,
-    PRIMARY KEY (trip_id, observation_time),
     FOREIGN KEY (trip_id) REFERENCES trip(id) ON DELETE CASCADE
 );
 CREATE TRIGGER IF NOT EXISTS trigger_trip_updated_at

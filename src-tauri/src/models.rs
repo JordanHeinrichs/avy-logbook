@@ -130,7 +130,9 @@ pub enum SolarRadiation {
 pub enum AvalancheSize {
     None,
     LessThan1,
+    #[serde(rename = "from15To2")]
     From1_5To2,
+    #[serde(rename = "moreThan25")]
     MoreThan2_5,
     Unknown,
 }
@@ -323,6 +325,29 @@ pub struct NewWeather {
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct AvyObservation {
+    #[ts(type = "number")]
+    pub id: i64,
+    #[ts(type = "number")]
+    pub trip_id: i64,
+    pub observation_time: String,
+
+    // Avalanche Activity
+    pub avy_activity_size: Option<AvalancheSize>,
+    pub avy_activity_trigger: Option<AvalancheTrigger>,
+    pub avy_activity_characteristic: Option<ProblemType>,
+
+    // Signs of Instability
+    pub instability_see_feel: Option<InstabilityObservation>,
+    pub instability_ct: Option<TestResult>,
+    pub instability_ect: Option<TestResult>,
+
+    pub comment: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+#[serde(rename_all = "camelCase")]
+pub struct NewAvyObservation {
     #[ts(type = "number")]
     pub trip_id: i64,
     pub observation_time: String,
