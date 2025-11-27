@@ -16,17 +16,15 @@
   }
 </script>
 
-<main class="container">
-  <div
-    class="flex flex-auto flex-row items-center bg-base-200 sticky top-0 shadow-md"
-  >
-    <img src="/logo.png" alt="Logo" class="size-20 ml-2 w-20" />
-    <h1 class="text-3xl font-bold grow text-center text-primary">
-      Avy Logbook
-    </h1>
-    <div class="w-20"></div>
-  </div>
+<header
+  class="flex-none flex flex-row items-center bg-base-200 sticky top-0 z-10 shadow-md"
+>
+  <img src="/logo.png" alt="Logo" class="size-20 ml-2 w-20" />
+  <h1 class="text-3xl font-bold grow text-center text-primary">Avy Logbook</h1>
+  <div class="w-20"></div>
+</header>
 
+<main class="container flex flex-1 flex-col gap-6 overflow-y-auto">
   <div class="list bg-base-100 rounded-box shadow-md">
     {#if data.trips.length === 0}
       <div class="list-row">

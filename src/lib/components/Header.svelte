@@ -22,7 +22,7 @@
 </script>
 
 <header
-  class="flex flex-row items-center bg-base-200 sticky top-0 z-10 shadow-md"
+  class="flex-none flex flex-row items-center bg-base-200 sticky top-0 z-10 shadow-md"
 >
   <div class="w-16">
     {#if backHref}

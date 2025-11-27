@@ -182,7 +182,9 @@
 
 <Header title={trip.name} subtitle={trip.tripDate} backHref="/" />
 
-<main class="container mx-auto p-4 flex flex-col gap-6 pb-20">
+<main
+  class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+1rem)]"
+>
   {#if trip.forecast}
     <div class="card bg-base-200 shadow-xl">
       <div class="card-body">

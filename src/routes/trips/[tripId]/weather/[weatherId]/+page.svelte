@@ -26,7 +26,7 @@
   backHref={`/trips/${weather.tripId}`}
 />
 
-<main class="container mx-auto p-4 pb-24">
+<main class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto">
   <WeatherForm bind:weather {isPlan} />
 </main>
 

@@ -52,7 +52,7 @@
 
 <Header title="Trip Plan" backHref={`/trips/${params.tripId}`} />
 
-<main class="container mx-auto p-4 flex flex-col gap-6 pb-24">
+<main class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto">
   <div class="card bg-base-200 shadow-sm">
     <div class="card-body p-4">
       <h3 class="font-bold text-lg mb-2">Safety Checks</h3>

@@ -107,7 +107,7 @@
 
 <Header title="Avy Forecast" backHref={`/trips/${params.tripId}`} />
 
-<main class="container mx-auto p-4 flex flex-col items-center pb-24">
+<main class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto">
   <div class="card w-full max-w-lg bg-base-200 shadow-xl">
     <div class="card-body">
       <h2 class="card-title text-2xl font-bold">Avalanche Forecast</h2>

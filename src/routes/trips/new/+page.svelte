@@ -26,7 +26,7 @@
 
 <Header title="Add Trip" backHref="/" />
 
-<main class="p-4 flex flex-col items-center pt-4">
+<main class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto">
   <div class="w-full max-w-md space-y-4">
     <div>
       <h2 class="text-2xl font-bold">Name and Date</h2>
