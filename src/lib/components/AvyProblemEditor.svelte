@@ -20,7 +20,7 @@
     { type: "windSlabs", label: "Wind Slabs", short: "WD" },
     { type: "persistentSlabs", label: "Persistent Slabs", short: "PS" },
     { type: "deepPersistentSlabs", label: "Deep Persistent", short: "DP" },
-    { type: "wetSlab", label: "Wet Slabs", short: "WS" },
+    { type: "wetSlab", label: "Wet Slabs", short: "WT" },
     { type: "looseDry", label: "Loose Dry", short: "LD" },
     { type: "looseWet", label: "Loose Wet", short: "LW" },
     { type: "cornices", label: "Cornices", short: "CO" },
@@ -36,7 +36,7 @@
   }
 
   function getBtnClass(exists: boolean): string {
-    const base = "btn btn-sm h-10 w-full px-0";
+    const base = "btn btn-sm w-full px-0";
     if (exists) {
       return `${base} btn-error text-white`;
     }

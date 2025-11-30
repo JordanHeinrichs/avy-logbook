@@ -7,35 +7,36 @@
   import type { DangerRating } from "$lib/types/DangerRating";
   import type { MacroTrend } from "$lib/types/MacroTrend";
   import type { Confidence } from "$lib/types/Confidence";
+  import type { AvalancheForecast } from "$lib/types/AvalancheForecast";
 
   let { params, data } = $props();
 
   const forecast = $state(data.avy);
   let problems = $state(data.problems);
 
-  // --- Enums & Display Maps (camelCase) ---
-  const DANGER_RATINGS: DangerRating[] = [
-    "low",
-    "moderate",
-    "considerable",
-    "high",
-    "extreme",
-    "unknown",
+  const dangerRating: [DangerRating, string][] = [
+    ["low", "Low"],
+    ["moderate", "Moderate"],
+    ["considerable", "Considerable"],
+    ["high", "High"],
+    ["extreme", "Extreme"],
+    ["unknown", "Unknown"],
   ];
-  const dangerRatingMap: Record<DangerRating, string> = {
-    low: "Low",
-    moderate: "Moderate",
-    considerable: "Considerable",
-    high: "High",
-    extreme: "Extreme",
-    unknown: "Unknown",
-  };
+
+  const dangerRatingElevation: [
+    keyof Pick<AvalancheForecast, "forecastAlp" | "forecastTl" | "forecastBtl">,
+    string,
+  ][] = [
+    ["forecastAlp", "Alpine"],
+    ["forecastTl", "Treeline"],
+    ["forecastBtl", "Below Treeline"],
+  ];
 
   const MACRO_TRENDS: MacroTrend[] = [
     "decreasing",
     "steady",
-    "meltFreeze",
     "increasing",
+    "meltFreeze",
     "unknown",
   ];
   const macroTrendMap: Record<MacroTrend, string> = {
@@ -75,7 +76,7 @@
     rating: DangerRating,
     selectedRating: DangerRating | null | undefined
   ): string {
-    const base = "btn btn-sm sm:btn-md flex-1";
+    const base = "btn btn-sm flex-0";
     const selectedClass = rating === selectedRating ? "" : "btn-outline";
 
     switch (rating) {
@@ -98,130 +99,106 @@
     option: T,
     selected: T | null | undefined
   ): string {
-    const base = "btn btn-sm sm:btn-md flex-1";
+    const base = "btn btn-sm flex-0 whitespace-nowrap";
     return option === selected
       ? `${base} btn-primary`
       : `${base} btn-outline btn-primary`;
   }
 </script>
 
-<Header title="Avy Forecast" backHref={`/trips/${params.tripId}`} />
+<Header title="Avalanche Forecast" backHref={`/trips/${params.tripId}`} />
 
-<main class="container mx-auto p-4 flex flex-col gap-6 overflow-y-auto">
-  <div class="card w-full max-w-lg bg-base-200 shadow-xl">
-    <div class="card-body">
-      <h2 class="card-title text-2xl font-bold">Avalanche Forecast</h2>
-      <p class="text-base-content/70 -mt-2 mb-4">
-        Get this information from the correct avalanche forecast region.
-      </p>
-
-      <section class="form-control w-full space-y-4">
-        <h3 class="text-xl font-bold">Danger Ratings</h3>
-
-        <div>
-          <label class="label" for="div">
-            <span class="label-text text-lg">Alpine</span>
-          </label>
-          <div class="btn-group w-full">
-            {#each DANGER_RATINGS as rating}
-              <button
-                class={getDangerRatingClass(rating, forecast.forecastAlp)}
-                onclick={() => (forecast.forecastAlp = rating)}
-              >
-                {dangerRatingMap[rating]}
-              </button>
-            {/each}
-          </div>
-        </div>
-        <div>
-          <label class="label" for="div">
-            <span class="label-text text-lg">Treeline</span>
-          </label>
-          <div class="btn-group w-full">
-            {#each DANGER_RATINGS as rating}
-              <button
-                class={getDangerRatingClass(rating, forecast.forecastTl)}
-                onclick={() => (forecast.forecastTl = rating)}
-              >
-                {dangerRatingMap[rating]}
-              </button>
-            {/each}
-          </div>
-        </div>
-        <div>
-          <label class="label" for="div">
-            <span class="label-text text-lg">Below Treeline</span>
-          </label>
-          <div class="btn-group w-full">
-            {#each DANGER_RATINGS as rating}
-              <button
-                class={getDangerRatingClass(rating, forecast.forecastBtl)}
-                onclick={() => (forecast.forecastBtl = rating)}
-              >
-                {dangerRatingMap[rating]}
-              </button>
-            {/each}
-          </div>
-        </div>
-      </section>
-
-      <div class="divider my-4"></div>
-
-      <section class="form-control w-full">
-        <label class="label" for="div">
-          <span class="label-text text-xl font-bold">Macro Trend</span>
-        </label>
-        <div class="btn-group w-full">
-          {#each MACRO_TRENDS as trend}
-            <button
-              class={getButtonClass(trend, forecast.macroTrends)}
-              onclick={() => (forecast.macroTrends = trend)}
-            >
-              {macroTrendMap[trend]}
-            </button>
-          {/each}
-        </div>
-      </section>
-
-      <div class="divider my-4"></div>
-
-      <section class="form-control w-full">
-        <label class="label" for="div">
-          <span class="label-text text-xl font-bold">Confidence</span>
-        </label>
-        <div class="btn-group w-full">
-          {#each CONFIDENCE_LEVELS as level}
-            <button
-              class={getButtonClass(level, forecast.confidence)}
-              onclick={() => (forecast.confidence = level)}
-            >
-              {confidenceMap[level]}
-            </button>
-          {/each}
-        </div>
-      </section>
-
-      <div class="divider my-4"></div>
-
-      <section class="form-control w-full">
-        <h3 class="text-xl font-bold mb-4">Avalanche Problems</h3>
-        <AvyProblemEditor forecastId={forecast.id} bind:problems />
-      </section>
-
-      <div class="divider my-4"></div>
-
-      <section class="form-control w-full">
-        <label class="label pb-2" for="textarea">
-          <span class="label-text text-xl font-bold">Comments</span>
-        </label>
-        <textarea
-          class="textarea textarea-bordered h-24"
-          placeholder="e.g. Forecast notes, specific concerns..."
-          bind:value={forecast.comment}
-        ></textarea>
-      </section>
-    </div>
+<main class="container mx-auto p-4 flex flex-col overflow-y-auto">
+  <div role="alert" class="alert">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      class="stroke-info h-6 w-6 shrink-0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      ></path>
+    </svg>
+    <span>Get this information from the correct avalanche forecast region.</span
+    >
   </div>
+
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4"
+  >
+    <legend class="fieldset-legend">Danger Ratings</legend>
+    {#each dangerRatingElevation as [key, label]}
+      <div>
+        <label class="label" for="div">
+          <span class="label-text text-lg">{label}</span>
+        </label>
+        <div class="flex w-full flex-wrap gap-1">
+          {#each dangerRating as [rating, ratingLabel]}
+            <button
+              class={getDangerRatingClass(rating, forecast[key])}
+              onclick={() => (forecast[key] = rating)}
+            >
+              {ratingLabel}
+            </button>
+          {/each}
+        </div>
+      </div>
+    {/each}
+  </fieldset>
+
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4"
+  >
+    <legend class="fieldset-legend">Macro Trend</legend>
+    <div class="flex w-full flex-wrap gap-1">
+      {#each MACRO_TRENDS as trend}
+        <button
+          class={getButtonClass(trend, forecast.macroTrends)}
+          onclick={() => (forecast.macroTrends = trend)}
+        >
+          {macroTrendMap[trend]}
+        </button>
+      {/each}
+    </div>
+  </fieldset>
+
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4"
+  >
+    <legend class="fieldset-legend">Confidence</legend>
+    <div class="flex w-full flex-wrap gap-1">
+      {#each CONFIDENCE_LEVELS as level}
+        <button
+          class={getButtonClass(level, forecast.confidence)}
+          onclick={() => (forecast.confidence = level)}
+        >
+          {confidenceMap[level]}
+        </button>
+      {/each}
+    </div>
+  </fieldset>
+
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4"
+  >
+    <legend class="fieldset-legend">Avalanche Problems</legend>
+    <AvyProblemEditor forecastId={forecast.id} bind:problems />
+  </fieldset>
+
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4"
+  >
+    <legend class="fieldset-legend">Comments</legend>
+    <textarea
+      class="textarea w-full"
+      placeholder="e.g. Forecast notes, specific concerns..."
+      bind:value={forecast.comment}
+    ></textarea>
+  </fieldset>
 </main>
 
-<Footer buttonText={data.wizard ? "Next" : "Back"} on:click={updateAndNext} />
+<Footer buttonText={data.wizard ? "Next" : "Save"} on:click={updateAndNext} />
