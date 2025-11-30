@@ -37,9 +37,6 @@
   --color-unknown: #9ca3af;
 }
 
-/* 3. Create custom button classes with Outline support */
-
-/* LOW: Green (Black text on fill) */
 .btn-low {
   @apply bg-low border-low text-black hover:bg-low/80 hover:border-low/80;
 
@@ -48,7 +45,6 @@
   }
 }
 
-/* MODERATE: Yellow (Black text on fill) */
 .btn-moderate {
   @apply bg-moderate border-moderate text-black hover:bg-moderate/80 hover:border-moderate/80;
 
@@ -57,7 +53,6 @@
   }
 }
 
-/* CONSIDERABLE: Orange (White text on fill) */
 .btn-considerable {
   @apply bg-considerable border-considerable text-white hover:bg-considerable/80 hover:border-considerable/80;
 
@@ -66,7 +61,6 @@
   }
 }
 
-/* HIGH: Red (White text on fill) */
 .btn-high {
   @apply bg-high border-high text-white hover:bg-high/80 hover:border-high/80;
 
@@ -75,13 +69,10 @@
   }
 }
 
-/* EXTREME: Black (White text on fill) */
 .btn-extreme {
   @apply bg-extreme border-extreme text-white hover:bg-extreme/80 hover:border-extreme/80;
 
   &.btn-outline {
-    /* Special handling for black button outline in dark mode:
-       We ensure the border/text is visible against dark backgrounds */
     @apply bg-transparent text-extreme hover:bg-extreme hover:text-white hover:border-extreme;
   }
 }
