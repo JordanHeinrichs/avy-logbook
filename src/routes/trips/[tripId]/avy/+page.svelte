@@ -81,17 +81,17 @@
 
     switch (rating) {
       case "low":
-        return `${base} ${selectedClass} btn-success`;
+        return `${base} ${selectedClass} btn-low`;
       case "moderate":
-        return `${base} ${selectedClass} btn-warning`;
+        return `${base} ${selectedClass} btn-moderate`;
       case "considerable":
-        return `${base} ${selectedClass} btn-error`;
+        return `${base} ${selectedClass} btn-considerable`;
       case "high":
-        return `${base} ${selectedClass} btn-error`;
+        return `${base} ${selectedClass} btn-high`;
       case "extreme":
-        return `${base} ${selectedClass} btn-neutral`;
+        return `${base} ${selectedClass} btn-extreme`;
       default:
-        return `${base} ${selectedClass} btn-ghost`;
+        return `${base} ${selectedClass} btn-unknown`;
     }
   }
 

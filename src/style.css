@@ -3,3 +3,93 @@
 @plugin "daisyui" {
     themes: light --default, dark --prefersdark, winter;
 }
+
+@theme {
+  --color-low: var(--color-low);
+  --color-moderate: var(--color-moderate);
+  --color-considerable: var(--color-considerable);
+  --color-high: var(--color-high);
+  --color-extreme: var(--color-extreme);
+  --color-unknown: var(--color-unknown);
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+
+  --color-low: #50C878;          /* Emerald Green */
+  --color-moderate: #FFC000;     /* Bright Yellow */
+  --color-considerable: #FF9900; /* Orange */
+  --color-high: #DC143C;         /* Crimson Red */
+  --color-extreme: #000000;      /* Black */
+  --color-unknown: #6b7280;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+
+  --color-low: #4ADE80;
+  --color-moderate: #FACC15;
+  --color-considerable: #FB923C;
+  --color-high: #EF4444;
+  --color-extreme: #1f2937;
+  --color-unknown: #9ca3af;
+}
+
+/* 3. Create custom button classes with Outline support */
+
+/* LOW: Green (Black text on fill) */
+.btn-low {
+  @apply bg-low border-low text-black hover:bg-low/80 hover:border-low/80;
+
+  &.btn-outline {
+    @apply bg-transparent text-low hover:bg-low hover:text-black hover:border-low;
+  }
+}
+
+/* MODERATE: Yellow (Black text on fill) */
+.btn-moderate {
+  @apply bg-moderate border-moderate text-black hover:bg-moderate/80 hover:border-moderate/80;
+
+  &.btn-outline {
+    @apply bg-transparent text-moderate hover:bg-moderate hover:text-black hover:border-moderate;
+  }
+}
+
+/* CONSIDERABLE: Orange (White text on fill) */
+.btn-considerable {
+  @apply bg-considerable border-considerable text-white hover:bg-considerable/80 hover:border-considerable/80;
+
+  &.btn-outline {
+    @apply bg-transparent text-considerable hover:bg-considerable hover:text-white hover:border-considerable;
+  }
+}
+
+/* HIGH: Red (White text on fill) */
+.btn-high {
+  @apply bg-high border-high text-white hover:bg-high/80 hover:border-high/80;
+
+  &.btn-outline {
+    @apply bg-transparent text-high hover:bg-high hover:text-white hover:border-high;
+  }
+}
+
+/* EXTREME: Black (White text on fill) */
+.btn-extreme {
+  @apply bg-extreme border-extreme text-white hover:bg-extreme/80 hover:border-extreme/80;
+
+  &.btn-outline {
+    /* Special handling for black button outline in dark mode:
+       We ensure the border/text is visible against dark backgrounds */
+    @apply bg-transparent text-extreme hover:bg-extreme hover:text-white hover:border-extreme;
+  }
+}
+
+.btn-unknown {
+  @apply bg-unknown border-unknown text-white hover:bg-unknown/80 hover:border-unknown/80;
+
+  &.btn-outline {
+    @apply bg-transparent text-unknown hover:bg-unknown hover:text-white hover:border-unknown;
+  }
+}
